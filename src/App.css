@@ -1,0 +1,258 @@
+/* navbar */
+.container-fluid {
+    background: #2D9AE5 !important;
+    padding: 24px 65px 24px 32px;
+    border-radius: 10px;
+}
+
+.Emr-logo {
+    width: 97px;
+    height: 30px !important;
+    aspect-ratio: 97/28 !important;
+}
+
+.Emr-heading {
+    color: #FFF;
+    font-family: "Korinna";
+    font-size: 28px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+/* Home */
+.heading {
+    color: #0A1629;
+    font-family: "Nunito Sans";
+    font-size: 28px;
+    font-style: normal;
+    font-weight: 800;
+    line-height: normal;
+    margin-top: 10px;
+}
+
+.create-btn {
+    background: #2D9AE5 !important;
+    color: #FFF !important;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    font-family: "Nunito Sans", sans-serif;
+    padding: 6px 12px;
+    width: 100%;
+    max-width: 213px;
+    height: auto;
+}
+
+.search-btn {
+    width: 49px;
+    height: 48px;
+    padding: 12px 18px 12px 16px;
+    align-items: center;
+    gap: 119px;
+    border-radius: 12px;
+    border: 1px solid #E7EAE9;
+    background: #FFF
+}
+
+
+
+.bell-btn {
+    width: 49px;
+    height: 48px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    border: 1px solid #E7EAE9;
+    background: #FFF;
+}
+
+.person-btn {
+    width: 49px;
+    height: 48px;
+    flex-shrink: 0;
+    border-radius: 25px;
+    border: 1px solid #E7EAE9;
+    background: #FFF;
+}
+
+/* folder */
+/* .folder-box {
+    width: 170px;
+   
+    gap: 55.24px;
+} */
+.heading-1 {
+    color: #0A1629;
+    font-family: "Nunito Sans";
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+.heading-2 {
+    color: #000;
+    font-family: "Inter";
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 130%;
+}
+
+.text {
+    color: #888;
+    font-family: "Manrope";
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 24px;
+}
+
+
+.upload-box {
+    cursor: pointer;
+    background-color: #f9fcff;
+    border: 2px dashed #cbd5e1;
+    transition: 0.2s;
+}
+
+.upload-box:hover {
+    background-color: #f0f8ff;
+}
+
+/* btn */
+
+
+/* create-card  */
+
+.heading-3 {
+    color: var(--Primary-Dark-Shade, #05004E);
+    font-family: "Poppins";
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 32px;
+}
+
+.UploadImg {
+    width: 250px;
+    height: 200px;
+    flex-shrink: 0;
+}
+
+.card-body p {
+    color: #000;
+    /* text-align: center; */
+    font-family: "Inter";
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+}
+
+.card-body span {
+    color: #000;
+    font-family: "Inter";
+    font-size: 9px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.card-date {
+    color: #000;
+    font-family: "Inter";
+    font-size: 9px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+}
+
+.create-browse {
+    color: #1485FD !important;
+    font-family: "DM Sans";
+    font-size: 13.722px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 13.082px;
+}
+
+/* login */
+body {
+    background-color: #f6fbff !important;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.Card-login {
+    width: 550px !important;
+    height: 404px !important;
+    background-color: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.card .form-control {
+    height: 45px;
+    border-radius: 10px;
+    border: 1.5px solid #dce6f1;
+    transition: border-color 0.3s ease;
+}
+
+.card .form-control:focus {
+    border-color: #2196f3;
+    box-shadow: none;
+}
+
+.card .btn-primary {
+    background-color: #2196f3;
+    border: none;
+    height: 40px;
+    border-radius: 8px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: background-color 0.2s ease;
+}
+
+/* 
+.card h5 {
+    font-weight: 600;
+} */
+
+.logo-title {
+    margin-top: -50px;
+    margin-bottom: 20px;
+}
+
+.logo-title h1 {
+    font-size: 32px;
+    color: red;
+    font-weight: 800;
+    letter-spacing: 2px;
+    margin-bottom: 0;
+}
+
+.logo-title h5 {
+    font-size: 20px;
+    color: #2196f3;
+    margin-top: 0;
+    font-weight: 500;
+}
+
+.active-icon {
+    color: #0d6efd;
+    background-color: #e6f0ff;
+    border-radius: 10px;
+}
+
+/* form-control */
+.form-control {
+    display: block;
+    width: 100%;
+    padding: 9px !important;
+    font-size: 14px !important;
+    line-height: 1.5;
+}
+
+
+/* userpage */
