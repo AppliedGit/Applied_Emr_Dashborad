@@ -242,7 +242,10 @@ const Userhome = () => {
                       :
                       adminState?.dir_data?.length ?
                         adminState?.dir_data?.map((item, index) => (
-                          <option value={item?.name} key={index}>{item?.name || ''}</option>
+                          item.status === 'y' ?
+                            <option value={item?.name} key={index}>{item?.name || ''}</option>
+                            :
+                            null
                         ))
                         :
                         null

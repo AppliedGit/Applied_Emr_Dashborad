@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { get_dir } from 'Views/Admin/Slice/Admin_slice';
 
 const userSlice = createSlice({
   name: 'user slice',
@@ -26,7 +27,8 @@ const userSlice = createSlice({
       switch (type) {
         case "request":
           state.is_predicting = true
-          state.predicted_data = {}
+          state.predicted_data = []
+          state.predicted_single_data = []
           break;
 
         case "response":
@@ -72,7 +74,25 @@ const userSlice = createSlice({
           break;
       }
     }
+  },
+  extraReducers: builder => {
+    builder
 
+      .addMatcher(
+        function (action) {
+          [
+            get_dir.toString()
+          ].includes(action.type)
+        },
+
+        (state, action) => {
+          if (action?.payload?.type === "request") {
+            state.user_data = {}
+            state.predicted_data = []
+            state.predicted_single_data = []
+          }
+        }
+      )
   }
 });
 
