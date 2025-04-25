@@ -42,7 +42,7 @@ const InputGroup = ({
                     disableRequiredStar ?
                         null
                         :
-                        <span className='text-danger'>*</span>
+                        <span className='text-danger ps-1'>*</span>
                 }
             </Form.Label>
             <Form.Control

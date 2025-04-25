@@ -1,79 +1,87 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-// const initialState = {
-//   modelRef: '',
-//   imageFile: null,
-//   csvFile: null,
-//   imagePreviewUrl: '',
-//   previewURL: '',
-//   isLoading: false,
-//   showEnhancer: false,
-//   showResult: false,
-//   showModal: false,
-//   selectedClass: '',
-//   newModelRef: '',
-//   classNames: ['Class 1', 'Class 2', 'Class 3'],
-//   folders: [],
-//   imageModelRef: '',
-// };
-
-const uploadSlice = createSlice({
-  name: 'upload',
-  // initialState,
+const userSlice = createSlice({
+  name: 'user slice',
+  initialState: {
+    user_data: {}
+  },
   reducers: {
-    setModelRef: (state, action) => { state.modelRef = action.payload },
-    setImageFile: (state, action) => { state.imageFile = action.payload },
-    setCsvFile: (state, action) => { state.csvFile = action.payload },
-    setImagePreviewUrl: (state, action) => { state.imagePreviewUrl = action.payload },
-    setPreviewURL: (state, action) => { state.previewURL = action.payload },
-    setIsLoading: (state, action) => { state.isLoading = action.payload },
-    setShowEnhancer: (state, action) => { state.showEnhancer = action.payload },
-    setShowResult: (state, action) => { state.showResult = action.payload },
-    setShowModal: (state, action) => { state.showModal = action.payload },
-    setSelectedClass: (state, action) => { state.selectedClass = action.payload },
-    setNewModelRef: (state, action) => { state.newModelRef = action.payload },
-    setFolders: (state, action) => { state.folders = action.payload },
-    setImageModelRef: (state, action) => { state.imageModelRef = action.payload },
-    addFolder: (state, action) => {
-      const folder = action.payload;
-      if (!state.folders.includes(folder)) {
-        state.folders.push(folder);
-      }
+    update_user_data(state, action) {
+      Object.entries(action?.payload).forEach(([key, value]) => {
+        switch (key) {
+          case 'folder_type':
+            state.user_data.selected_folder = ''
+            state.user_data[key] = value;
+            break;
+
+          default:
+            state.user_data[key] = value;
+            break;
+        }
+      })
     },
-
-
-    imageProcessFlow: (state, action) => {
+    start_predicting(state, action) {
       const { type, data } = action.payload;
 
       switch (type) {
         case "request":
-          state.isLoading = true;
-          state.showResult = false;
+          state.is_predicting = true
+          state.predicted_data = {}
           break;
 
         case "response":
-          state.isLoading = false;
-          state.showResult = true;
-          state.previewURL = data.previewURL;
+          state.is_predicting = false
+          state.predicted_data = data
+          state.predicted_single_data = data?.length ? [data[0]] : []
           break;
 
         case "failure":
-          state.isLoading = false;
-          state.showResult = false;
+          state.is_predicting = false
+          break;
+
+        default:
+          break;
+      }
+    },
+    predicted_next_data(state, action) {
+      const [, ...rest] = state.predicted_data || [];
+
+      state.predicted_data = rest;
+      state.predicted_single_data = rest?.length ? [rest[0]] : [];
+      state.user_data.folder_type = ''
+      state.user_data.selected_folder = ''
+    },
+    correction_predicting(state, action) {
+      const { type, data } = action.payload;
+
+      switch (type) {
+        case "request":
+          state.correction_predicting_glow = true
+          break;
+
+        case "response":
+          state.correction_predicting_glow = false
+          state.user_data.correct_prediction_modal = false
+          break;
+
+        case "failure":
+          state.correction_predicting_glow = false
           break;
 
         default:
           break;
       }
     }
+
   }
 });
 
-export const {
-  setModelRef, setImageFile, setCsvFile, setImagePreviewUrl, setPreviewURL,
-  setIsLoading, setShowEnhancer, setShowResult, setShowModal, setSelectedClass,
-  setNewModelRef, setFolders, setImageModelRef, addFolder,
-  imageProcessFlow // export this new action
-} = uploadSlice.actions;
+const { actions, reducer } = userSlice;
 
-export default uploadSlice.reducer;
+export const {
+  update_user_data, start_predicting, correction_predicting,
+  predicted_next_data
+
+} = actions;
+
+export default reducer;

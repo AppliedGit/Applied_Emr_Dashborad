@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import Cookies from 'js-cookie'
 import { decryptData, encryptData } from "Security/Crypto/Crypto";
 import { create_update_modal, get_dir, train_modal } from "Views/Admin/Slice/Admin_slice";
+import { correction_predicting, start_predicting } from "Views/User/Slice/User_slice";
 
 const commonSlice = createSlice({
     name: 'commonSlice',
@@ -192,6 +193,8 @@ const commonSlice = createSlice({
             return {
                 ...state,
                 token: '',
+                refresh_token: '',
+                user_role: '',
                 usernamee: '',
                 passwordd: '',
             }
@@ -311,16 +314,15 @@ const commonSlice = createSlice({
                     return [
                         get_dir.toString(),
                         train_modal.toString(),
-                        create_update_modal.toString()
+                        create_update_modal.toString(),
+                        start_predicting.toString(),
+                        correction_predicting.toString()
                     ].includes(action.type)
                 },
 
                 (state, action) => {
-                    if (action?.payload?.type === "response") {
-                        setSuccessState(state, action);
-                    } else if (action?.payload?.type === "failure") {
-                        setErrorState(state, action);
-                    }
+                    if (action?.payload?.type === "response") setSuccessState(state, action);
+                    if (action?.payload?.type === "failure") setErrorState(state, action);
                 }
             )
     }

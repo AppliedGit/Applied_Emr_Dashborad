@@ -1,16 +1,18 @@
+import ButtonComponent from 'Components/Button/Button';
 import React from 'react'
-import { Link, useLocation } from 'react-router-dom';
+import { useDispatch } from 'ResuableFunctions/CustomHooks';
 import Icons from 'Utils/Icons';
-import Emr from 'Assets/emr.png';
+import Image from 'Utils/Image';
+import { logout } from 'Views/Common/Slice/Common_slice';
 
-const UserNavbar = ({ onSearch }) => {
-  const location = useLocation();
+const UserNavbar = () => {
+  const dispatch = useDispatch();
 
   return (
     <nav className="navbar navbar-expand-lg shadow-sm px-3 h-100" style={{ backgroundColor: "#F4F9FD" }}>
       <div className="container-fluid">
         <a className="navbar-brand d-flex align-items-center fs-4" href="#">
-          <img src={Emr} alt="Emr" className='Emr-logo' />
+          <img src={Image?.CompanyLogo} alt="Emr" className='Emr-logo' />
           <span className="Emr-heading ms-2">APPLIED</span>
         </a>
 
@@ -27,16 +29,12 @@ const UserNavbar = ({ onSearch }) => {
         </button>
 
         <div className="collapse navbar-collapse justify-content-end" id="navbarNav">
-          <form className="d-flex align-items-center mt-3 mt-lg-0 w-100 justify-content-lg-end">
-            <Link
-              to="/login"
-              className={`person-btn btn-outline-primary bg-white border-0 d-flex align-items-center justify-content-center ${location.pathname === "/login" ? "active-icon" : ""
-                }`}
-              aria-label="Profile"
-            >
-              {Icons.FbUser}
-            </Link>
-          </form>
+          <ButtonComponent
+            type="button"
+            className="btn-light py-2"
+            buttonName={Icons.logout_icon}
+            clickFunction={() => dispatch(logout())}
+          />
         </div>
       </div>
     </nav>

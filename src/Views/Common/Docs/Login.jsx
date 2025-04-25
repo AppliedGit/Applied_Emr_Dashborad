@@ -11,15 +11,15 @@ const Login = () => {
           <div className="card-body p-3 p-md-4 p-xl-5 py-5">
             <div className="text-center mb-3">
               <div className="text-center mb-3">
-                {/* <Img
+                <Img
                   src={Image.CompanyLogo}
                   alt="modelrocket-logo"
-                  width="90rem"
-                  height="60rem"
-                /> */}
-                <h2 style={{ color: 'red', fontWeight: 'bold', letterSpacing: "2px" }}>EMR</h2>
-                <h1 style={{ fontWeight: "500", color: "#2D9AE5" }}>APPLIED</h1>
-                <h5 className="text-center" style={{ color: '#2D9AE5' }}>Login</h5>
+                  width="50rem"
+                  height="20rem"
+                />
+                {/* <h2 style={{ color: 'red', fontWeight: 'bold', letterSpacing: "2px" }}>EMR</h2> */}
+                <h1 style={{ fontWeight: "500", color: "#2D9AE5",fontSize:"28px" }}>APPLIED</h1>
+              
               </div>
               </div>
               <LoginForm />

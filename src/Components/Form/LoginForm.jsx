@@ -4,10 +4,10 @@ import Row from 'react-bootstrap/Row';
 import InputGroup from 'Components/Input/InputGroup';
 import ButtonComponent from 'Components/Button/Button';
 import { useCustomNavigate, useDispatch } from 'ResuableFunctions/CustomHooks';
-import SpinnerComponent from 'Components/Spinner/Spinner';
 import { handleEyeFunction, handleLogin, handleLoginCredentials, handleValidation } from 'Views/Common/Action/Common_action';
 import sha256 from 'sha256';
 import { useSelector } from 'react-redux';
+import ButtonSpinner from 'Components/Spinner/ButtonSpinner';
 
 const LoginForm = () => {
     const { usernamee, passwordd, eyeOpen, buttonSpinner, validated } = useSelector((state) => state.commonState);
@@ -61,18 +61,19 @@ const LoginForm = () => {
                 />
             </Row>
 
-            <ButtonComponent
-                type="button"
-                className="btn-md btn-primary w-100"
-                clickFunction={handleSubmit}
-                title="Login"
-                buttonName={buttonSpinner ?
-                    <SpinnerComponent />
+
+            {
+                buttonSpinner ?
+                    <ButtonSpinner title="Logging in" className="ps-3 btn-primary" spinner_width_height="1.5rem" />
                     :
-                    "Login"
-                }
-                btnDisable={buttonSpinner}
-            />
+                    <ButtonComponent
+                        type="button"
+                        className="btn-md btn-primary w-100"
+                        clickFunction={handleSubmit}
+                        title="Login"
+                        buttonName="Login"
+                    />
+            }
         </Form>
     )
 }

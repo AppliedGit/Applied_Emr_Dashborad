@@ -9,10 +9,11 @@ import { createSelector } from '@reduxjs/toolkit';
 //                                                   Redux reusable memorized state                                                          //
 const selectCommonState = (state) => state.commonState;
 const selectAdminState = (state) => state.adminState;
+const selectUserState = (state) => state.userState;
 
 const selectMemoizedStates = createSelector(
-  [selectCommonState, selectAdminState],
-  (commonState, adminState) => ({ commonState, adminState })
+  [selectCommonState, selectAdminState, selectUserState],
+  (commonState, adminState, userState) => ({ commonState, adminState, userState })
 );
 
 const useCommonState = () => {
@@ -76,7 +77,7 @@ export const useSize = () => {
         }
       ))
     };
-    
+
     window.addEventListener("resize", windowSizeHandler);
 
     return () => {

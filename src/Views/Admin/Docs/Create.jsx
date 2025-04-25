@@ -138,10 +138,8 @@ const Create = () => {
           <div className="p-4 bg-white rounded shadow-sm h-100 d-flex flex-column" style={{ minHeight: '600px' }}>
             <h6 className="heading-3 mb-3">Upload Image</h6>
 
-            <div
-              className="border border-primary border-2 rounded position-relative text-center p-4 mb-3"
-              style={{ borderStyle: 'dashed', height: '180px' }}
-            >
+            <div className="border border-primary border-2 rounded position-relative text-center p-4 mb-3"
+              style={{ borderStyle: 'dashed', height: '180px' }} >
               <input
                 type="file"
                 accept="image/*"

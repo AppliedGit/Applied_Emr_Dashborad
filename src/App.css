@@ -151,14 +151,7 @@
     line-height: normal;
 }
 
-.card-body span {
-    color: #000;
-    font-family: "Inter";
-    font-size: 9px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal;
-}
+
 
 .card-date {
     color: #000;
