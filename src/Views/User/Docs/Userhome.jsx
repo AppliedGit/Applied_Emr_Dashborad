@@ -277,7 +277,7 @@ const Userhome = () => {
                   style={{ borderStyle: 'dashed', height: '100px' }} >
                   <input
                     type="file"
-                    accept="image/*"
+                    accept=".ods, .xls, .xlsx"
                     className="position-absolute top-0 start-0 w-100 h-100 opacity-0"
                     onChange={(e) => upload_image(e, "file")}
                     multiple
