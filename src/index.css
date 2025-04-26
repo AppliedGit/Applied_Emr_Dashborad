@@ -84,3 +84,7 @@
 .file-atc-box:last-child {
     margin-bottom: 0;
 }
+
+.user_home_height{
+    height: calc(100vh - 15.9rem);
+}

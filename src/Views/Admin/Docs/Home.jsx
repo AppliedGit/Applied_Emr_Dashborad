@@ -4,6 +4,7 @@ import { Button, Navbar } from 'react-bootstrap';
 import useCommonState, { useCustomNavigate, useDispatch } from 'ResuableFunctions/CustomHooks';
 import { handle_get_dir } from '../Action/AdminAction';
 import FolderCard from '../../../Components/Card/FolderCard';
+import SpinnerComponent from 'Components/Spinner/Spinner';
 
 const Home = () => {
   const { adminState } = useCommonState()
@@ -38,7 +39,12 @@ const Home = () => {
           <Navbar onSearch={(val) => setSearchTerm(val)} />
           {
             adminState?.dir_glow ?
-              null
+              <div className="row align-items-center justify-content-center" style={{ height: "40rem" }}>
+                <div className="col-6 text-center">
+                  <SpinnerComponent variant="primary"/>
+                  <p className='mt-1'>Collecting data..</p>
+                </div>
+              </div>
               :
               adminState?.dir_data?.length ?
                 <div className="container py-4">

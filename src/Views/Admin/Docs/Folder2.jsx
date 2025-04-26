@@ -4,6 +4,7 @@ import Icons from 'Utils/Icons';
 import ImageDetailsModal from './ImageDetailsModal';
 import { handle_get_dir } from '../Action/AdminAction';
 import useCommonState, { useDispatch } from 'ResuableFunctions/CustomHooks';
+import SpinnerComponent from 'Components/Spinner/Spinner';
 
 const Folder2 = () => {
     const { folder, file } = useParams();
@@ -83,53 +84,60 @@ const Folder2 = () => {
                         + Create Image Model
                     </button>
                 </div>
-
-                {/* Table View */}
-                <div className="table-responsive mt-5 p-3" style={{ backgroundColor: "#FFFFFF", border: "12px" }}>
-                    <div className="d-flex align-items-center gap-2 ">
-                        <Link
-                            to="/admin_dashboard"
-                            style={{
-                                fontSize: '1.2rem',
-                                cursor: 'pointer',
-                                marginBottom: '2px'
-                            }}
-                        >
-                            {Icons.LeftArrow}
-                        </Link>
-                        <h3 className="mb-0 mt-1">{folder}</h3>
+                {adminState?.dir_glow ?
+                    <div className="row align-items-center justify-content-center" style={{ height: "45rem" }}>
+                        <div className="col-6 text-center">
+                            <SpinnerComponent variant="primary" />
+                            <p className='mt-1'>Collecting data..</p>
+                        </div>
                     </div>
-                    <p>Total Files: {get_files(adminState?.dir_data)?.length}</p>
+                    :
+                    <div className="table-responsive mt-5 p-3" style={{ backgroundColor: "#FFFFFF", border: "12px" }}>
+                        <div className="d-flex align-items-center gap-2 ">
+                            <Link
+                                to="/admin_dashboard"
+                                style={{
+                                    fontSize: '1.2rem',
+                                    cursor: 'pointer',
+                                    marginBottom: '2px'
+                                }}
+                            >
+                                {Icons.LeftArrow}
+                            </Link>
+                            <h3 className="mb-0 mt-1">{folder}</h3>
+                        </div>
+                        <p>Total Files: {get_files(adminState?.dir_data)?.length}</p>
 
-                    <hr className='divider' />
-                    <div className='p-4'>
-                        <table className="table table-bordered  ">
-                            <thead className="table-light text-center">
-                                <tr>
-                                    <th style={{ width: '10%' }}>S.No</th>
-                                    <th>Class Name</th>
-                                    <th style={{ width: '15%' }}>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {display_folders(adminState?.dir_data)[0]?.children?.map((item, idx) => (
-                                    <tr key={idx}>
-                                        <td>{idx+1}</td>
-                                        <td>{item?.name}</td>
-                                        <td className='d-flex justify-content-center'>
-                                            <button
-                                                className="btn btn-link p-0 "
-                                                onClick={() => handleViewDetails(item?.children)}
-                                            >
-                                                View
-                                            </button>
-                                        </td>
+                        <hr className='divider' />
+                        <div className='p-4'>
+                            <table className="table table-bordered  ">
+                                <thead className="table-light text-center">
+                                    <tr>
+                                        <th style={{ width: '10%' }}>S.No</th>
+                                        <th>Class Name</th>
+                                        <th style={{ width: '15%' }}>Action</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    {display_folders(adminState?.dir_data)[0]?.children?.map((item, idx) => (
+                                        <tr key={idx}>
+                                            <td>{idx + 1}</td>
+                                            <td>{item?.name}</td>
+                                            <td className='d-flex justify-content-center'>
+                                                <button
+                                                    className="btn btn-link p-0 "
+                                                    onClick={() => handleViewDetails(item?.children)}
+                                                >
+                                                    View
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
+                }
             </div>
 
             <ImageDetailsModal

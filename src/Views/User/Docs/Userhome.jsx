@@ -222,174 +222,184 @@ const Userhome = () => {
     <div className="container py-4">
       <h5 className="heading-1 mb-4 d-flex align-items-center gap-2">Compare Image</h5>
 
-      <div className="row g-4 align-items-stretch">
-        <div className="col-sm-12 col-md-6" style={{ height: '38rem' }}>
-          <Card className="rounded-4 border-0 shadow-sm h-100">
-            <Card.Header className="bg-transparent pt-3">
-              <Card.Title>Upload Inputs</Card.Title>
-            </Card.Header>
-            <Card.Body style={{ height: '100%', overflowY: 'scroll' }}>
-              <Form.Group className="mb-3">
-                <h6 className="form-label heading-2">Image Model Ref</h6>
-                <Form.Select
-                  value={userState?.user_data?.modal || ''}
-                  onChange={(e) => dispatch(update_user_data({ modal: e.target.value }))}
-                >
-                  <option value="">Select a Model</option>
-                  {
-                    adminState?.dir_glow ?
-                      null
-                      :
-                      adminState?.dir_data?.length ?
-                        adminState?.dir_data?.map((item, index) => (
-                          item.status === 'y' ?
-                            <option value={item?.name} key={index}>{item?.name || ''}</option>
-                            :
-                            null
-                        ))
-                        :
-                        null
-                  }
-                </Form.Select>
-              </Form.Group>
 
-              <Form.Group className="mb-4">
-                <h6 className="form-label heading-2">Upload Image</h6>
-                <div className="border rounded position-relative text-center p-4 mb-3"
-                  style={{ borderStyle: 'dashed', height: '100px' }} >
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="position-absolute top-0 start-0 w-100 h-100 opacity-0"
-                    onChange={(e) => upload_image(e, "image")}
-                    multiple
-                  />
-                  <div className="d-flex align-items-center h-100">
-                    <div className='col-2'>{Icons.Browse}</div>
-                    <p className="text-muted mb-0">Drop file or Browse</p>
-                  </div>
-                </div>
-              </Form.Group>
-              {userState?.user_data?.image_show_ui?.map((data, index) => {
-                return file_function(data, index)
-              })}
-
-              <Form.Group className="mb-3">
-                <h6 className="form-label heading-2">Upload CSV File</h6>
-                <div className="border rounded position-relative text-center p-4 mb-3"
-                  style={{ borderStyle: 'dashed', height: '100px' }} >
-                  <input
-                    type="file"
-                    accept=".ods, .xls, .xlsx"
-                    className="position-absolute top-0 start-0 w-100 h-100 opacity-0"
-                    onChange={(e) => upload_image(e, "file")}
-                    multiple
-                  />
-                  <div className="d-flex align-items-center h-100">
-                    <div className='col-2'>
-                      {Icons.Browse}
-                    </div>
-                    <div className="col-10 text-start">
-                      <p className="text-muted mb-0">Drop file or Browse</p>
-                      <p className="text-secondary mb-0">Format: ods, xls</p>
-                    </div>
-                  </div>
-                </div>
-              </Form.Group>
-              {userState?.user_data?.files_show_ui?.map((data, index) => {
-                return file_function(data, index)
-              })}
-            </Card.Body>
-
-            <Card.Footer className="bg-transparent d-flex justify-content-end gap-2">
-              <ButtonComponent
-                buttonName="Next"
-                className="btn-primary"
-                clickFunction={() => dispatch(handle_start_predicting(userState?.user_data))}
-                btnDisable={userState?.is_predicting}
-              />
-            </Card.Footer>
-          </Card>
+      {adminState?.dir_glow ?
+        <div className="row align-items-center justify-content-center" style={{ height: "45rem" }}>
+          <div className="col-6 text-center">
+            <SpinnerComponent variant="primary" />
+            <p className='mt-1'>Collecting available models..</p>
+          </div>
         </div>
-
-        <div className="col-sm-12 col-md-6" style={{ height: '38rem' }}>
-          <Card className="rounded-4 border-0 shadow-sm h-100">
-            <Card.Header className="bg-transparent pt-3">
-              <Card.Title>Image Result</Card.Title>
-            </Card.Header>
-
-            <Card.Body style={{ height: '100%', overflowY: 'scroll' }}>
-              {userState?.is_predicting ?
-                <div className='h-100 row align-items-center justify-content-center'>
-                  <div className="col-8 text-center">
-                    <SpinnerComponent />
-                    <p className="mt-2">Predicting...</p>
-                  </div>
-                </div>
-                :
-                !userState?.predicted_data ?
-                  <div className="text-muted d-flex flex-column align-items-center justify-content-center" style={{ minHeight: '500px' }}>
-                    <img src={Image?.image_loader} alt="Upload Placeholder" style={{ maxHeight: 150 }} />
-                    <p className="mt-2">No image loaded yet</p>
-                  </div>
-                  :
-                  <div className='col-12'>
+        :
+        <div className="row g-4 align-items-stretch">
+          <div className="col-sm-12 col-md-6 user_home_height">
+            <Card className="rounded-4 border-0 shadow-sm h-100">
+              <Card.Header className="bg-transparent pt-3">
+                <Card.Title>Upload Inputs</Card.Title>
+              </Card.Header>
+              <Card.Body style={{ height: '100%', overflowY: 'scroll' }}>
+                <Form.Group className="mb-3">
+                  <h6 className="form-label heading-2">Image Model Ref</h6>
+                  <Form.Select
+                    value={userState?.user_data?.modal || ''}
+                    onChange={(e) => dispatch(update_user_data({ modal: e.target.value }))}
+                  >
+                    <option value="">Select a Model</option>
                     {
-                      userState?.predicted_single_data?.map((item, index) => (
-                        <Fragment>
-                          <div className="col-12 text-center mb-3">
-                            <Img src={matchedImage(item?.filename)?.fileimage || ''} alt="prediction response" width="90%" height="280rem" />
-                          </div>
-
-                          {Object.entries(item).map(([key, value]) => {
-                            if (key !== "corrected") {
-                              switch (key) {
-                                case "output":
-                                  return <div className="mb-3">
-                                    <h6 className="heading-2">{key}</h6>
-                                    <div className="p-2">
-                                      <textarea cols={10} rows={8} className="form-control pe-none">{value || ''}</textarea>
-                                    </div>
-                                  </div>
-
-                                default:
-                                  return <div className="mb-3">
-                                    <h6 className="heading-2">{key}</h6>
-                                    <div className="p-2">
-                                      <p>{value || ''}</p>
-                                    </div>
-                                  </div>
-                              }
-                            }
-                          })}
-                        </Fragment>
-                      ))
+                      adminState?.dir_glow ?
+                        null
+                        :
+                        adminState?.dir_data?.length ?
+                          adminState?.dir_data?.map((item, index) => (
+                            item.status === 'y' ?
+                              <option value={item?.name} key={index}>{item?.name || ''}</option>
+                              :
+                              null
+                          ))
+                          :
+                          null
                     }
-                  </div>
-              }
-            </Card.Body>
+                  </Form.Select>
+                </Form.Group>
 
-            {!userState?.is_predicting && userState.predicted_data ?
+                <Form.Group className="mb-4">
+                  <h6 className="form-label heading-2">Upload Image</h6>
+                  <div className="border rounded position-relative text-center p-4 mb-3"
+                    style={{ borderStyle: 'dashed', height: '100px' }} >
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="position-absolute top-0 start-0 w-100 h-100 opacity-0"
+                      onChange={(e) => upload_image(e, "image")}
+                      multiple
+                    />
+                    <div className="d-flex align-items-center h-100">
+                      <div className='col-2'>{Icons.Browse}</div>
+                      <p className="text-muted mb-0">Drop file or Browse</p>
+                    </div>
+                  </div>
+                </Form.Group>
+                {userState?.user_data?.image_show_ui?.map((data, index) => {
+                  return file_function(data, index)
+                })}
+
+                <Form.Group className="mb-3">
+                  <h6 className="form-label heading-2">Upload CSV File</h6>
+                  <div className="border rounded position-relative text-center p-4 mb-3"
+                    style={{ borderStyle: 'dashed', height: '100px' }} >
+                    <input
+                      type="file"
+                      accept=".ods, .xls, .xlsx"
+                      className="position-absolute top-0 start-0 w-100 h-100 opacity-0"
+                      onChange={(e) => upload_image(e, "file")}
+                      multiple
+                    />
+                    <div className="d-flex align-items-center h-100">
+                      <div className='col-2'>
+                        {Icons.Browse}
+                      </div>
+                      <div className="col-10 text-start">
+                        <p className="text-muted mb-0">Drop file or Browse</p>
+                        <p className="text-secondary mb-0">Format: ods, xls</p>
+                      </div>
+                    </div>
+                  </div>
+                </Form.Group>
+                {userState?.user_data?.files_show_ui?.map((data, index) => {
+                  return file_function(data, index)
+                })}
+              </Card.Body>
+
               <Card.Footer className="bg-transparent d-flex justify-content-end gap-2">
                 <ButtonComponent
-                  buttonName="No"
+                  buttonName="Next"
                   className="btn-primary"
-                  clickFunction={() => dispatch(update_user_data({ correct_prediction_modal: true }))}
-                />
-
-                <ButtonComponent
-                  buttonName="Yes"
-                  className="btn-primary"
-                  clickFunction={() => dispatch(predicted_next_data())}
-                  btnDisable={userState?.predicted_data?.length <= 1}
+                  clickFunction={() => dispatch(handle_start_predicting(userState?.user_data))}
+                  btnDisable={userState?.is_predicting}
                 />
               </Card.Footer>
-              :
-              null
-            }
-          </Card>
+            </Card>
+          </div>
+
+          <div className="col-sm-12 col-md-6 user_home_height">
+            <Card className="rounded-4 border-0 shadow-sm h-100">
+              <Card.Header className="bg-transparent pt-3">
+                <Card.Title>Image Result</Card.Title>
+              </Card.Header>
+
+              <Card.Body style={{ height: '100%', overflowY: 'scroll' }}>
+                {userState?.is_predicting ?
+                  <div className='h-100 row align-items-center justify-content-center'>
+                    <div className="col-8 text-center">
+                      <SpinnerComponent />
+                      <p className="mt-2">Predicting...</p>
+                    </div>
+                  </div>
+                  :
+                  !userState?.predicted_data ?
+                    <div className="text-muted h-100 d-flex flex-column align-items-center justify-content-center" style={{ minHeight: '500px' }}>
+                      <img src={Image?.image_loader} alt="Upload Placeholder" style={{ maxHeight: 150 }} />
+                      <p className="mt-2">No image loaded yet</p>
+                    </div>
+                    :
+                    <div className='col-12'>
+                      {
+                        userState?.predicted_single_data?.map((item, index) => (
+                          <Fragment>
+                            <div className="col-12 text-center mb-3">
+                              <Img src={matchedImage(item?.filename)?.fileimage || ''} alt="prediction response" width="90%" height="280rem" />
+                            </div>
+
+                            {Object.entries(item).map(([key, value]) => {
+                              if (key !== "corrected") {
+                                switch (key) {
+                                  case "output":
+                                    return <div className="mb-3">
+                                      <h6 className="heading-2">{key}</h6>
+                                      <div className="p-2">
+                                        <textarea cols={10} rows={8} className="form-control pe-none">{value || ''}</textarea>
+                                      </div>
+                                    </div>
+
+                                  default:
+                                    return <div className="mb-3">
+                                      <h6 className="heading-2">{key}</h6>
+                                      <div className="p-2">
+                                        <p>{value || ''}</p>
+                                      </div>
+                                    </div>
+                                }
+                              }
+                            })}
+                          </Fragment>
+                        ))
+                      }
+                    </div>
+                }
+              </Card.Body>
+
+              {!userState?.is_predicting && userState.predicted_data ?
+                <Card.Footer className="bg-transparent d-flex justify-content-end gap-2">
+                  <ButtonComponent
+                    buttonName="No"
+                    className="btn-primary"
+                    clickFunction={() => dispatch(update_user_data({ correct_prediction_modal: true }))}
+                  />
+
+                  <ButtonComponent
+                    buttonName="Yes"
+                    className="btn-primary"
+                    clickFunction={() => dispatch(predicted_next_data())}
+                    btnDisable={userState?.predicted_data?.length <= 1}
+                  />
+                </Card.Footer>
+                :
+                null
+              }
+            </Card>
+          </div>
         </div>
-      </div>
+      }
 
       {/* Modal */}
       <Modal show={userState?.user_data?.correct_prediction_modal} centered onHide={() => dispatch(update_user_data({ correct_prediction_modal: false }))}>
