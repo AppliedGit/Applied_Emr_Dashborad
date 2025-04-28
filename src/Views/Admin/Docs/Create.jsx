@@ -112,37 +112,6 @@ const Create = () => {
             </div>
           </div>
 
-          {/* Right Panel */}
-          {/* <div className="col-md-6">
-          <div className="p-4 bg-white rounded shadow-sm h-100 d-flex flex-column justify-content-between" style={{ minHeight: '650px' }}>
-            <h6 className="heading-3 mb-3">Upload Image</h6>
-
-            <div className="border border-primary border-2 rounded position-relative text-center p-4 mb-3" style={{ borderStyle: 'dashed', height: '180px' }}>
-              <input type="file" accept="image/*" className="position-absolute top-0 start-0 w-100 h-100 opacity-0" onChange={(e) => dispatch(update_create_image_modal({ images: e.target.files }))} multiple />
-              <div className="d-flex flex-column justify-content-center align-items-center h-100">
-                <div>{Icons.Browse}</div>
-                <p className="text-muted mb-0">Drop file or Browse</p>
-                <small className="text-secondary">Format: png, jpg, jpeg & Max file size: 25 MB</small>
-              </div>
-            </div>
-
-            {Array.from(adminState?.create_image_modal?.images || [])?.map((file, index) => (
-              <div key={index} className="position-relative d-flex justify-content-center align-items-center bg-light rounded mb-3" style={{ minHeight: '300px', width: '100%', maxWidth: '574px', margin: '0 auto' }}>
-                <img src={URL.createObjectURL(file)} alt={`Uploaded ${index}`} className="img-fluid border rounded mt-3" style={{ width: '90%', maxWidth: '450px', maxHeight: '280px', objectFit: 'contain', }} />
-                <button className="btn btn-light position-absolute top-0 end-0 me-3 mt-3 p-0 d-flex justify-content-center align-items-center" onClick={() => handleDelete(index)} style={{ width: '30px', height: '30px' }} >
-                  {Icons.Trash}
-                </button>
-              </div>
-            ))}
-
-            <ButtonComponent
-              className="btn w-100 mt-auto btn-primary"
-              clickFunction={handleCheck}
-              buttonName={adminState?.create_image_modal?.modal_type}
-            />
-          </div>
-        </div> */}
-
           <div className="col-md-6">
             <div className="p-4 bg-white rounded-4 shadow-sm  d-flex flex-column user_home_height">
               <h6 className="heading-3 mb-3">Upload Image</h6>

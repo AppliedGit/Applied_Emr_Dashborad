@@ -61,14 +61,17 @@ const adminSlice = createSlice({
             Object.entries(action.payload).forEach(([key, value]) => {
                 switch (key) {
                     case "folder_name": {
-                        const class_folders =
-                            state.dir_data?.find(item => item.name === value)
-                                ?.children?.find(child => child.name === "train")
-                                ?.children?.filter(folder => folder.type === "folder")
-                                ?.map(folder => folder.name) || [];
+                        if (state.create_image_modal.modal_type !== "Create new modal") {
+                            const class_folders =
+                                state.dir_data?.find(item => item.name === value)
+                                    ?.children?.find(child => child.name === "train")
+                                    ?.children?.filter(folder => folder.type === "folder")
+                                    ?.map(folder => folder.name) || [];
 
-                        state.create_image_modal.class_names = class_folders;
-                        state.create_image_modal.no_of_classes = class_folders?.length || 0;
+                            state.create_image_modal.class_names = class_folders;
+                            state.create_image_modal.no_of_classes = class_folders?.length || 0;
+                        }
+
                         state.create_image_modal.folder_name = value;
                         break;
                     }
@@ -78,15 +81,19 @@ const adminSlice = createSlice({
                         state.create_image_modal.endpoint = value === "Create new modal" ? "/create_class" : "/upload_image";
                         state.create_image_modal.folder_name = "";
                         state.create_image_modal.class_names = [];
+                        state.create_image_modal.no_of_classes = 0;
                         break;
 
                     case "add_new_class": {
                         const newClass = state.create_image_modal.new_class_name?.trim();
                         if (newClass) {
-                            state.create_image_modal.class_names = state.create_image_modal.class_names || [];
-                            if (!state.create_image_modal.class_names.includes(newClass)) {
-                                state.create_image_modal.class_names.push(newClass);
+                            const class_names_array = state.create_image_modal.class_names || []
+                            if (!class_names_array.includes(newClass)) {
+                                class_names_array.push(newClass);
                             }
+
+                            state.create_image_modal.class_names = class_names_array
+                            state.create_image_modal.no_of_classes = class_names_array?.length || 0;
                         }
                         state.create_image_modal.new_class_name = "";
                         break;
