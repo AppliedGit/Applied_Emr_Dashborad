@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import Icons from 'Utils/Icons';
 import { Button, Navbar } from 'react-bootstrap';
 import useCommonState, { useCustomNavigate, useDispatch } from 'ResuableFunctions/CustomHooks';
-import { handle_get_dir } from '../Action/AdminAction';
+import { handle_get_dir, handle_train_model_progress } from '../Action/AdminAction';
 import FolderCard from '../../../Components/Card/FolderCard';
 import SpinnerComponent from 'Components/Spinner/Spinner';
 
 const Home = () => {
   const { adminState } = useCommonState()
   const dispatch = useDispatch()
-  const navigate = useCustomNavigate()
-  const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useCustomNavigate() 
 
   useEffect(() => {
     dispatch(handle_get_dir())
+    dispatch(handle_train_model_progress())
   }, [])
 
   return (
@@ -36,7 +36,7 @@ const Home = () => {
         <hr className="divider" />
 
         <div className="row mt-3 ">
-          <Navbar onSearch={(val) => setSearchTerm(val)} />
+          <Navbar/>
           {
             adminState?.dir_glow ?
               <div className="row align-items-center justify-content-center" style={{ height: "40rem" }}>
@@ -51,7 +51,7 @@ const Home = () => {
                   <div className="row g-4">
                     {adminState?.dir_data?.map((item, index) => (
                       <div className="col-12 col-sm-6 col-lg-4" key={index}>
-                        <FolderCard item={item} />
+                        <FolderCard item={item} is_under_tarining={adminState?.is_under_tarining}/>
                       </div>
                     ))}
                   </div>

@@ -1,25 +1,31 @@
 import ButtonComponent from "Components/Button/Button";
-import { useCustomNavigate, useDispatch } from "ResuableFunctions/CustomHooks";
+import useCommonState, { useCustomNavigate, useDispatch } from "ResuableFunctions/CustomHooks";
 import ModalComponent from "Components/Modal/Modal";
-import SpinnerComponent from "Components/Spinner/Spinner";
-import { useSelector } from "react-redux";
-import Icons from "Utils/Icons";
-import { resetModalBox, updateModalShow } from "Views/Common/Slice/Common_slice"; 
-import Img from "Components/Img/Img";
-import Image from "Utils/Image";
+import { resetModalBox } from "Views/Common/Slice/Common_slice";
+import { handle_train_modal } from "Views/Admin/Action/AdminAction";
+import CircularProgressBar from "Components/Progress/CircularProgressBar";
+import { useEffect, useRef } from "react";
+import ButtonSpinner from "Components/Spinner/ButtonSpinner";
 
 export function OverallModel() {
-    const { commonState, interviewState } = useSelector((state) => state);
+    const { commonState, adminState } = useCommonState();
     const dispatch = useDispatch();
     const navigate = useCustomNavigate();
+    const containerRef = useRef(null);
+
+    useEffect(() => {
+        if (containerRef.current) {
+            containerRef.current.scrollTop = containerRef.current.scrollHeight;
+        }
+    }, [adminState?.traing_command_prompt]);
+
 
     function modalHeaderFun() {
         switch (commonState?.modal_from) {
-            case "interview_candidate":
+            case "Home":
                 switch (commonState?.modal_type) {
-                    case "test_completed":
-                        // return <h6 className='mb-0'>Test completed</h6>;
-                        return
+                    case "":
+                        return <h5>Train Model</h5>
 
                     default:
                         break;
@@ -33,15 +39,58 @@ export function OverallModel() {
 
     function dynamicInput() {
         let funBy = null
- 
+
     }
 
     function modalBodyFun() {
         switch (commonState?.modal_from) {
-            case "":
+            case "Home":
                 switch (commonState?.modal_type) {
-                    case "":
-                         break
+                    case "train_confiramtion":
+                        return <div className="col-12 row py-5">
+                            <div className="col-12">
+                                <h5 className="text-center">Train Model</h5>
+                                <p className="text-center">{`Are you sure you want to train this (${adminState?.train_path}) model?`}</p>
+                            </div>
+                            <div className="col-12 d-flex justify-content-center">
+                                <ButtonComponent
+                                    type="button"
+                                    className="btn btn-primary px-5"
+                                    buttonName="No"
+                                    clickFunction={() => dispatch(resetModalBox())}
+                                />
+                                {
+                                    adminState?.train_model_spinner ?
+                                        <ButtonSpinner title="training..." />
+                                        :
+                                        <ButtonComponent
+                                            type="button"
+                                            className="btn btn-primary ms-3 px-5"
+                                            buttonName="Yes"
+                                            clickFunction={() => dispatch(handle_train_modal({ base_path: adminState?.train_path }))}
+                                        />
+                                }
+                            </div>
+                        </div>
+
+                    case "start_train":
+                        return <div className="w-100">
+                            <div className="w-100 row">
+                                <div className="col-9">
+                                    <h5 className="">Training Model</h5>
+                                    <p className="">{`Training model (${adminState?.train_path}) in progress...`}</p>
+                                </div>
+                                <div className="col-3 d-flex justify-content-end">
+                                    <CircularProgressBar percentage={1} size={80} />
+                                </div>
+                            </div>
+
+                            <div className="w-100 row mt-3">
+                                <div className="train_command_prompt" ref={containerRef}>
+
+                                </div>
+                            </div>
+                        </div>
 
                     default:
                         break;
@@ -54,7 +103,7 @@ export function OverallModel() {
             case "":
                 switch (commonState?.modal_type) {
                     case "":
-                        break  
+                        break
 
                     default:
                         break;

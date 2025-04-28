@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import Icons from 'Utils/Icons';
 import ImageDetailsModal from './ImageDetailsModal';
-import { handle_get_dir } from '../Action/AdminAction';
+import { handle_delete_data, handle_get_dir } from '../Action/AdminAction';
 import useCommonState, { useDispatch } from 'ResuableFunctions/CustomHooks';
 import SpinnerComponent from 'Components/Spinner/Spinner';
+import ButtonComponent from 'Components/Button/Button';
+import { update_selected_modal_image } from '../Slice/Admin_slice';
 
 const Folder2 = () => {
     const { folder, file } = useParams();
     const { adminState } = useCommonState();
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const [selectedCard, setSelectedCard] = useState(null);
-    const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
         dispatch(handle_get_dir(`${folder}/${file}`))
@@ -55,8 +55,7 @@ const Folder2 = () => {
     };
 
     const handleViewDetails = (card) => {
-        setSelectedCard(card);
-        setShowModal(true);
+        dispatch(update_selected_modal_image({ data: card, show_modal: true }));
     };
 
     return (
@@ -116,6 +115,7 @@ const Folder2 = () => {
                                         <th style={{ width: '10%' }}>S.No</th>
                                         <th>Class Name</th>
                                         <th style={{ width: '15%' }}>Action</th>
+                                        <th style={{ width: '15%' }}>Delete</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -123,13 +123,27 @@ const Folder2 = () => {
                                         <tr key={idx}>
                                             <td>{idx + 1}</td>
                                             <td>{item?.name}</td>
-                                            <td className='d-flex justify-content-center'>
-                                                <button
-                                                    className="btn btn-link p-0 "
-                                                    onClick={() => handleViewDetails(item?.children)}
-                                                >
-                                                    View
-                                                </button>
+                                            <td className='text-center'>
+                                                <ButtonComponent
+                                                    type="button"
+                                                    className="btn btn-link p-0"
+                                                    clickFunction={() => handleViewDetails(item?.children)}
+                                                    buttonName="View"
+                                                />
+                                            </td>
+                                            <td className='text-center'>
+                                                {
+                                                    adminState?.delete_modal_data?.path === item?.path ?
+                                                        <SpinnerComponent variant="primary" spinner_width_height={20} />
+                                                        :
+                                                        <ButtonComponent
+                                                            type="button"
+                                                            className="btn btn-link text-danger p-0"
+                                                            clickFunction={() => dispatch(handle_delete_data({ path: item?.path, from: 'image_folder_deletion' }))}
+                                                            buttonName="Delete"
+                                                            btnDisable={adminState?.delete_modal_data?.path}
+                                                        />
+                                                }
                                             </td>
                                         </tr>
                                     ))}
@@ -141,9 +155,12 @@ const Folder2 = () => {
             </div>
 
             <ImageDetailsModal
-                show={showModal}
-                onClose={() => setShowModal(false)}
-                images={selectedCard}
+                show={adminState?.selected_modal_image?.show_modal}
+                onClose={() => dispatch(update_selected_modal_image({}))}
+                images={adminState?.selected_modal_image?.data}
+                deletion_path={adminState?.delete_modal_data?.path}
+                folder={folder}
+                file={file}
             />
         </>
     );

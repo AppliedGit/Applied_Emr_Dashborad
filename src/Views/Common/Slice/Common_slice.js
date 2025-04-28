@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import Cookies from 'js-cookie'
 import { decryptData, encryptData } from "Security/Crypto/Crypto";
-import { create_update_modal, get_dir, train_modal } from "Views/Admin/Slice/Admin_slice";
+import { create_update_modal, get_dir, train_modal, train_modal_path } from "Views/Admin/Slice/Admin_slice";
 import { correction_predicting, start_predicting } from "Views/User/Slice/User_slice";
 
 const commonSlice = createSlice({
@@ -11,7 +11,7 @@ const commonSlice = createSlice({
         moalSize: "md",
         modal_from: null,
         modal_type: null,
-        modal_close_btn: true,
+        modal_close_btn: false,
 
         canvasShow: false,
         isOnline: true,
@@ -53,10 +53,13 @@ const commonSlice = createSlice({
     },
     reducers: {
         updateModalShow(state, actions) {
-            return {
-                ...state,
-                modalShow: !state.modalShow
-            }
+            const { type, data } = actions.payload;
+
+            state.modalShow = true
+            state.moalSize = data?.modalSize || "md"
+            state.modal_from = data?.modal_from || null
+            state.modal_type = data?.modal_type || null
+            state.modal_close_btn = data?.modal_close_btn || false
         },
         updateCanvasShow(state, actions) {
             return {
@@ -90,7 +93,7 @@ const commonSlice = createSlice({
                 moalSize: "md",
                 modal_from: null,
                 modal_type: null,
-                modal_close_btn: true,
+                modal_close_btn: false,
             }
         },
 
@@ -309,6 +312,19 @@ const commonSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
+            .addCase(train_modal_path, (state, action) => {
+                state.modalShow = true
+                state.moalSize = 'md'
+                state.modal_from = 'Home'
+                state.modal_type = 'train_confiramtion'
+            })
+
+            .addCase(train_modal, (state, action) => {
+                state.moalSize = 'lg'
+                state.modal_from = 'Home'
+                state.modal_type = 'start_train'
+            })
+
             .addMatcher(
                 function (action) {
                     return [

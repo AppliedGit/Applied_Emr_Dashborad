@@ -88,3 +88,10 @@
 .user_home_height{
     height: calc(100vh - 15.9rem);
 }
+
+.train_command_prompt{
+    height: 20rem;
+    background-color: rgba(26, 25, 25, 0.899);
+    border-radius: 12px;
+    color: white;
+}

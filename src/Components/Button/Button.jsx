@@ -8,7 +8,8 @@ const ButtonComponent = ({
   className,
   type,
   clickFunction,
-  btnDisable
+  btnDisable,
+  style
 }) => {
 
 
@@ -20,6 +21,7 @@ const ButtonComponent = ({
       onClick={clickFunction}
       title={title}
       disabled={btnDisable}
+      style={style}
     >
       {buttonName}
     </button>

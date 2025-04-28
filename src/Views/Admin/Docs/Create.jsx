@@ -63,7 +63,7 @@ const Create = () => {
             <div className="p-4 bg-white rounded-4 shadow-sm user_home_height">
               <h6 className="heading-3 mb-4">Image Module</h6>
               <div className="row">
-                {["Create new modal", "Update modal"]?.map((item, ind) =>
+                {["Create new model", "Update model"]?.map((item, ind) =>
                   <div className="col" key={ind}>
                     <input
                       type="radio"
@@ -78,7 +78,7 @@ const Create = () => {
                 )}
               </div>
 
-              {adminState?.create_image_modal?.modal_type === 'c' ?
+              {adminState?.create_image_modal?.modal_type === 'Update model' ?
                 <select className="form-select mb-4" value={adminState?.create_image_modal?.folder_name || ''} onChange={(e) => dispatch(update_create_image_modal({ folder_name: e.target.value }))}>
                   <option value="">Select folder</option>
                   {Array.isArray(adminState?.dir_data) &&

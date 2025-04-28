@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react'
+import React, { Fragment, useEffect } from 'react'
 import { useDispatch } from "react-redux";
 import { handleClearErrors } from 'Views/Common/Action/Common_action';
 import { toast } from 'react-toastify';
 import useCommonState, { CustomUseLocationHook, useSize } from 'ResuableFunctions/CustomHooks';
 import { Outlet } from 'react-router-dom';
 import { updateCurrentNavMenuIndex, updateIsonline, updateScreenCurrentDimension } from 'Views/Common/Slice/Common_slice';
+import { OverallModel } from 'ResuableFunctions/OverallModal';
 
 export const InitializeProjectSetup = () => {
     const { commonState } = useCommonState();
@@ -60,7 +61,10 @@ export const InitializeProjectSetup = () => {
     }, [location])
 
     return commonState?.isOnline ?
-        <Outlet />
+        <Fragment>
+            <Outlet />
+            <OverallModel />
+        </Fragment>
         :
         <p>No internet connection</p>
 }

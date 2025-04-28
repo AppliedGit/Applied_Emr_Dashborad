@@ -1,6 +1,7 @@
 import axiosInstance from 'Services/axiosInstance';
 import {
-    get_dir, train_modal, create_update_modal
+    get_dir, train_modal, create_update_modal, delete_modal,
+    train_model_progress
 
 } from 'Views/Admin/Slice/Admin_slice';
 
@@ -26,20 +27,45 @@ export const handle_get_dir = params => async (dispatch) => {
 export const handle_train_modal = params => async (dispatch) => {
     if (params?.base_path) {
         try {
-            dispatch(train_modal({ type: "request", data: params?.base_path }))
+            dispatch(train_modal({ type: "request" }))
+
             const { data } = await axiosInstance.post("/train_model", params)
 
             if (data?.error_code === 200) {
-                dispatch(train_modal({ type: "response", data: params?.base_path }))
+                dispatch(handle_train_model_progress({ path: params?.base_path, message: data?.message || '' }))
+                dispatch(train_modal({ type: "response" }))
             }
             else {
-                dispatch(train_modal({ type: "failure", data: params?.base_path, message: data?.message }))
+                dispatch(train_modal({ type: "failure", message: data?.message }))
             }
         } catch (Err) {
-            dispatch(train_modal({ type: "failure", data: params?.base_path, message: Err?.message }))
+            dispatch(train_modal({ type: "failure", message: Err?.message }))
         }
     } else {
         dispatch(train_modal({ type: "failure", message: 'Base path required' }))
+    }
+}
+
+export const handle_train_model_progress = params => async (dispatch) => {
+    console.log(params)
+    if (params?.path) {
+        try {
+            dispatch(train_model_progress({ type: "request", data: params?.path }))
+
+            const { data } = await axiosInstance.get("/train_model_progress", params)
+
+            if (data?.error_code === 200) {
+                console.log(data)
+                // dispatch(train_model_progress({ type: "response", data: data }))
+            }
+            else {
+                dispatch(train_model_progress({ type: "failure", message: data?.message }))
+            }
+        } catch (Err) {
+            dispatch(train_model_progress({ type: "failure", message: Err?.message }))
+        }
+    } else {
+        dispatch(train_model_progress({ type: "failure", message: 'Base path required' }))
     }
 }
 
@@ -74,5 +100,26 @@ export const handle_create_update_modal = params => async (dispatch) => {
         }
     } catch (Err) {
         dispatch(create_update_modal({ type: "failure", message: Err?.message }))
+    }
+}
+
+export const handle_delete_data = params => async (dispatch) => {
+    if (params?.path) {
+        try {
+            dispatch(delete_modal({ type: "request", data: params }))
+
+            const { data } = await axiosInstance.post("/delete", { path: params?.path })
+
+            if (data?.error_code === 200) {
+                dispatch(delete_modal({ type: "response", data: params }))
+            }
+            else {
+                dispatch(delete_modal({ type: "failure", message: data?.message }))
+            }
+        } catch (Err) {
+            dispatch(delete_modal({ type: "failure", message: Err?.message }))
+        }
+    } else {
+        dispatch(delete_modal({ type: "failure", message: 'Base path required' }))
     }
 }

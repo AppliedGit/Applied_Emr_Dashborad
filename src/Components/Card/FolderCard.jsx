@@ -1,11 +1,14 @@
+import ButtonComponent from 'Components/Button/Button';
 import SpinnerComponent from 'Components/Spinner/Spinner';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import useCommonState, { useDispatch } from 'ResuableFunctions/CustomHooks';
 import Icons from 'Utils/Icons';
-import { handle_train_modal } from 'Views/Admin/Action/AdminAction';
+import { handle_delete_data, handle_train_modal } from 'Views/Admin/Action/AdminAction';
+import { train_modal_path } from 'Views/Admin/Slice/Admin_slice';
+import { updateModalShow } from 'Views/Common/Slice/Common_slice';
 
-const FolderCard = ({ item }) => {
+const FolderCard = ({ item, is_under_tarining }) => {
   const { adminState } = useCommonState();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -36,6 +39,22 @@ const FolderCard = ({ item }) => {
       : [];
   };
 
+  function train_status(status) {
+    switch (status) {
+      case "train":
+        return { backgroundColor: "#efefef9e", color: "#4a81bd" }
+
+      case "training":
+        return { backgroundColor: "#ffff001a", color: "#ff9c00" }
+
+      case "trained":
+        return { backgroundColor: "#EFFFEB", color: "#23890E" }
+
+      default:
+        break;
+    }
+  }
+
   return (
     <>
       <div className="card shadow-sm border-0 p-3 h-100" style={{ borderRadius: "12px", background: "#FFF" }}>
@@ -44,21 +63,35 @@ const FolderCard = ({ item }) => {
             <h5 className="heading-1 mb-0">{item?.name || ''}</h5>
             <p className="text-muted small mb-0">Type: {item?.type || ''}</p>
           </div>
-          <div>
-            {
-              item?.status === "y" ?
-                <button className="btn" style={{ backgroundColor: "#EFFFEB", color: "#23890E" }} >Trained</button>
+          <div className='d-flex flex-column'>
+            <ButtonComponent
+              type="button"
+              className="btn"
+              style={train_status(item?.status)}
+              buttonName={item?.status}
+              // btnDisable={adminState?.is_under_tarining}
+              clickFunction={!/training|trained/.test(item?.status) ?
+                () => dispatch(train_modal_path(item?.name))
                 :
-                <button className={`btn ${adminState?.train_path?.includes(item?.name) ? 'pe-none' : ''}`} style={{ backgroundColor: "#efefef9e", color: "#4a81bd" }} onClick={() => dispatch(handle_train_modal({ base_path: item?.name }))}>
-                  {
-                    adminState?.train_path?.includes(item?.name) ?
-                      <SpinnerComponent spinner_width_height='1.5rem' />
-                      :
-                      'Train'
-                  }
-                </button>
+                null}
+            />
+
+            {
+              adminState?.delete_modal_data?.path === item?.path ?
+                <div className="mt-2 text-center">
+                  <SpinnerComponent variant="primary" spinner_width_height={20} />
+                </div>
+                :
+                <ButtonComponent
+                  type="button"
+                  className="btn btn-link text-danger p-0 mt-2"
+                  clickFunction={() => dispatch(handle_delete_data({ path: item?.path, from: 'folder_deletion' }))}
+                  buttonName="Delete"
+                  btnDisable={adminState?.delete_modal_data?.path}
+                />
             }
           </div>
+
         </div>
 
         <p className="text mb-2">Total Files: {get_files(item)?.length}</p>
