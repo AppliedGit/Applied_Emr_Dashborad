@@ -7,6 +7,7 @@ const UserAuth = () => {
     const { commonState } = useCommonState();
     const dispatch = useDispatch();
     const toastShownRef = useRef(false);
+    if (commonState?.logout_triggered) return <Navigate to="/" />
 
     if (!commonState?.token) {
         if (!toastShownRef.current) {

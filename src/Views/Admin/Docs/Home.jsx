@@ -12,8 +12,7 @@ const Home = () => {
   const navigate = useCustomNavigate() 
 
   useEffect(() => {
-    dispatch(handle_get_dir())
-    dispatch(handle_train_model_progress())
+    dispatch(handle_get_dir()) 
   }, [])
 
   return (

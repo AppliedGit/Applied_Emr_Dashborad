@@ -195,6 +195,7 @@ const commonSlice = createSlice({
             Cookies.remove("ZW1yLWxvZ3M=");
             return {
                 ...state,
+                logout_triggered: true,
                 token: '',
                 refresh_token: '',
                 user_role: '',
@@ -309,6 +310,9 @@ const commonSlice = createSlice({
                 apply_filter: false
             }
         },
+        reset_logout_triggered(state, actions) {
+            state.logout_triggered = null
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -389,7 +393,7 @@ export const {
     updateApplyFilterClickedFalse,
 
     updateEntriesCount,
-    closeTestMode
+    reset_logout_triggered
 } = actions;
 
 export default reducer

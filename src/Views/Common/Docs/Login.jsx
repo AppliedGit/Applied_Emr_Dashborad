@@ -1,9 +1,17 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import LoginForm from 'Components/Form/LoginForm'
 import Img from 'Components/Img/Img'
 import Image from 'Utils/Image'
+import { useDispatch } from 'ResuableFunctions/CustomHooks'
+import { reset_logout_triggered } from '../Slice/Common_slice'
 
 const Login = () => {
+  const dispatch = useDispatch()
+  
+  useEffect(() => {
+    dispatch(reset_logout_triggered())
+  }, [])
+
   return (
     <div className="bg-light min-vh-100 d-flex align-items-center justify-content-center">
       <div className="col-10 col-sm-8 col-md-6 col-lg-5 col-xl-4 col-xxl-3 login-large-screen-width">
@@ -26,7 +34,7 @@ const Login = () => {
 
             <div className="text-center mt-4">
               <small className="text-muted" >
-                Developed by <span style={{color: "#2D9AE5"}}>Applied Automation</span>
+                Developed by <span style={{ color: "#2D9AE5" }}>Applied Automation</span>
               </small>
             </div>
           </div>
