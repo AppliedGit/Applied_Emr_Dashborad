@@ -78,7 +78,7 @@ const Create = () => {
                 )}
               </div>
 
-              {adminState?.create_image_modal?.modal_type === 'Update modal' ?
+              {adminState?.create_image_modal?.modal_type === 'c' ?
                 <select className="form-select mb-4" value={adminState?.create_image_modal?.folder_name || ''} onChange={(e) => dispatch(update_create_image_modal({ folder_name: e.target.value }))}>
                   <option value="">Select folder</option>
                   {Array.isArray(adminState?.dir_data) &&

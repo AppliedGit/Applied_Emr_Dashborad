@@ -14,20 +14,26 @@ const Login = () => {
                 <Img
                   src={Image.CompanyLogo}
                   alt="modelrocket-logo"
-                  width="50rem"
-                  height="20rem"
+                  width="120rem"
+                  height="40rem"
                 />
                 {/* <h2 style={{ color: 'red', fontWeight: 'bold', letterSpacing: "2px" }}>EMR</h2> */}
-                <h1 style={{ fontWeight: "500", color: "#2D9AE5",fontSize:"28px" }}>APPLIED</h1>
-              
+                {/* <h1 style={{ fontWeight: "500", color: "#2D9AE5",fontSize:"28px" }}>APPLIED</h1> */}
+
               </div>
-              </div>
-              <LoginForm />
+            </div>
+            <LoginForm />
+
+            <div className="text-center mt-4">
+              <small className="text-muted" >
+                Developed by <span style={{color: "#2D9AE5"}}>Applied Automation</span>
+              </small>
             </div>
           </div>
         </div>
       </div>
-      )
+    </div>
+  )
 }
 
-      export default Login
+export default Login
