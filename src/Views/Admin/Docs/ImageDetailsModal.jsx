@@ -2,14 +2,12 @@ import ButtonComponent from 'Components/Button/Button';
 import React from 'react';
 import { Modal } from 'react-bootstrap';
 import { useDispatch } from 'ResuableFunctions/CustomHooks';
-import Icons from 'Utils/Icons';
-import { handle_delete_data } from '../Action/AdminAction';
-import SpinnerComponent from 'Components/Spinner/Spinner';
+import Icons from 'Utils/Icons'; 
+import { deletion_data } from '../Slice/Admin_slice';
 
 const ImageDetailsModal = ({ show, onClose, images = [], deletion_path, folder, file }) => {
   const dispatch = useDispatch();
 
-  console.log(deletion_path)
   return (
     <Modal show={show} onHide={onClose} size="xl" centered>
       <Modal.Header closeButton>
@@ -31,21 +29,13 @@ const ImageDetailsModal = ({ show, onClose, images = [], deletion_path, folder, 
                     <p className="card-title fw-bold mb-0" style={{ fontSize: '0.9rem' }}>{img?.name || ''}</p>
                   </div>
                   <div className="col-3">
-                    {
-                      deletion_path === img?.path ?
-                        <div className="d-flex justify-content-center align-items-center">
-                          <SpinnerComponent variant="primary" spinner_width_height={20} />
-                        </div>
-                        :
-                        <ButtonComponent
-                          type="button"
-                          className="btn"
-                          buttonName={Icons?.Trash}
-                          clickFunction={() => dispatch(handle_delete_data({ path: img?.path, from: 'image_deletion' }))}
-                          btnDisable={deletion_path}
-                        />
-                    }
-
+                    <ButtonComponent
+                      type="button"
+                      className="btn py-2"
+                      clickFunction={() => dispatch(deletion_data({ path: img?.path, from: 'image_deletion', type: 'Image', name: img?.name }))}
+                      buttonName={Icons?.Trash}
+                      btnDisable={deletion_path}
+                    />
                   </div>
                 </div>
               </div>

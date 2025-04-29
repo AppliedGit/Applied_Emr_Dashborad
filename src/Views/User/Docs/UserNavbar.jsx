@@ -11,9 +11,9 @@ const UserNavbar = () => {
   return (
     <nav className="navbar navbar-expand-lg shadow-sm px-3 h-100" style={{ backgroundColor: "#F4F9FD" }}>
       <div className="container-fluid">
-        <a className="navbar-brand d-flex align-items-center fs-4" href="#">
-          <img src={Image?.CompanyLogo} alt="Emr" className='Emr-logo' />
-          <span className="Emr-heading ms-2">APPLIED</span>
+        <a className="navbar-brand d-flex align-items-center fs-4">
+          {/* <img src={Image?.CompanyLogo} alt="Emr" className='Emr-logo' /> */}
+          <span className='Emr-heading'>DCRM ANALYSIS AUTOMATION</span>
         </a>
 
         <button

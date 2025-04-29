@@ -42,7 +42,7 @@ const Create = () => {
   };
 
   return (
-    <div className="container py-4">
+    <div className="container pt-4">
       <h5 className="heading-1 mb-4 d-flex align-items-center gap-2">
         <Link to="/admin_dashboard" style={{ marginBottom: "6px" }}>
           <span style={{ fontSize: '1.20rem', marginBottom: "4px", cursor: "pointer" }}>{Icons.LeftArrow}</span>
@@ -61,7 +61,7 @@ const Create = () => {
         <div className="row g-4">
           <div className="col-md-6">
             <div className="p-4 bg-white rounded-4 shadow-sm user_home_height">
-              <h6 className="heading-3 mb-4">Image Module</h6>
+              <h6 className="heading-3 mb-4">Image Model</h6>
               <div className="row">
                 {["Create new model", "Update model"]?.map((item, ind) =>
                   <div className="col" key={ind}>
@@ -209,7 +209,7 @@ const Create = () => {
                 <div className="col">
                   {
                     adminState?.create_update_modal_spinner ?
-                      <ButtonSpinner title="Saving..." spinner_width_height="1.5rem" className="py-1 btn-primary" />
+                      <ButtonSpinner title="Saving..." spinner_width_height="1.5rem" className="w-100 py-1 btn-primary" />
                       :
                       <ButtonComponent
                         className='btn-primary w-100'

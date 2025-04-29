@@ -8,7 +8,7 @@ const ButtonSpinner = ({ title, className, spinner_width_height }) => {
   return (
     <ButtonComponent
       type="button"
-      className={`w-100 ${className ? className : 'btn-primary py-2'} rounded-3`}
+      className={`${className ? className : 'w-100 btn-primary py-2'} rounded-3`}
       buttonName={
         <div className='row align-items-center'>
           <div className='col text-start'>

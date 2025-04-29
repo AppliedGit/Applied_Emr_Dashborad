@@ -4,7 +4,9 @@ const adminSlice = createSlice({
     name: "admin_slice",
     initialState: {
         dir_glow: false,
+        is_streaming: false,
         traing_command_prompt: [],
+        training_percentage: 0,
         selected_modal_image: {},
         create_image_modal: {
             modal_type: 'Update model',
@@ -36,34 +38,12 @@ const adminSlice = createSlice({
                     break;
             }
         },
-        train_modal_path(state, action) {
-            state.train_path = action.payload
-        },
-        train_modal(state, action) {
-            const { type, data } = action.payload;
 
-            switch (type) {
-                case "request":
-                    state.train_model_spinner = true;
-                    break;
-
-                case "response":
-                    state.train_model_spinner = false;
-                    break;
-
-                case "failure":
-                    state.train_model_spinner = false;
-                    break;
-
-                default:
-                    break;
-            }
-        },
         update_create_image_modal(state, action) {
             Object.entries(action.payload).forEach(([key, value]) => {
                 switch (key) {
                     case "folder_name": {
-                        if (state.create_image_modal.modal_type !== "Create new modal") {
+                        if (state.create_image_modal.modal_type !== "Create new model") {
                             const class_folders =
                                 state.dir_data?.find(item => item.name === value)
                                     ?.children?.find(child => child.name === "train")
@@ -80,7 +60,7 @@ const adminSlice = createSlice({
 
                     case "modal_type":
                         state.create_image_modal.modal_type = value;
-                        state.create_image_modal.endpoint = value === "Create new modal" ? "/create_class" : "/upload_image";
+                        state.create_image_modal.endpoint = value === "Create new model" ? "/create_class" : "/upload_image";
                         state.create_image_modal.folder_name = "";
                         state.create_image_modal.class_names = [];
                         state.create_image_modal.no_of_classes = 0;
@@ -131,12 +111,17 @@ const adminSlice = createSlice({
         update_selected_modal_image(state, action) {
             state.selected_modal_image = action.payload
         },
+
+        deletion_data(state, action) {
+            state.deletion_data = action.payload
+            state.selected_modal_image = {}
+        },
         delete_modal(state, action) {
             const { type, data } = action.payload;
 
             switch (type) {
                 case "request":
-                    state.delete_modal_data = data
+                    state.delete_modal_spinner = true
                     break;
 
                 case "response":
@@ -158,11 +143,45 @@ const adminSlice = createSlice({
                         state.dir_data = remaining_folders
                     }
 
-                    state.delete_modal_data = null
+                    state.delete_modal_spinner = false
                     break;
 
                 case "failure":
-                    state.delete_modal_data = null
+                    state.delete_modal_spinner = false
+                    break;
+
+                default:
+                    break;
+            }
+        },
+
+        train_modal_path(state, action) {
+            state.train_path = action.payload
+            state.train_model_spinner = false
+        },
+        train_modal(state, action) {
+            const { type, data } = action.payload;
+
+            switch (type) {
+                case "request":
+                    state.traing_command_prompt = []
+                    state.training_percentage = 0
+                    state.train_model_spinner = true
+                    break;
+
+                case "response":
+                    state.train_model_spinner = false
+                    state.traing_command_prompt = [data]
+                    state.is_streaming = true
+
+                    let update_dir = state.dir_data?.map(item =>
+                        item.name === state.train_path ? { ...item, status: "training" } : item
+                    )
+                    state.dir_data = update_dir
+                    break;
+
+                case "failure":
+                    state.train_model_spinner = false
                     break;
 
                 default:
@@ -174,15 +193,31 @@ const adminSlice = createSlice({
 
             switch (type) {
                 case "request":
-                    state.training_prompt_status = [data]
+                    if (data?.show === "training_status") {
+                        state.train_path = data?.path
+                        state.traing_command_prompt = []
+                        state.training_percentage = 0
+                        state.is_streaming = true
+                    }
+                    if (data?.show !== "training_status") state.traing_command_prompt = [...state.traing_command_prompt, data]
                     break;
 
                 case "response":
-                    state.training_prompt_status = [...state.training_prompt_status, data]
+                    state.traing_command_prompt = [...state.traing_command_prompt, data]
+                    state.is_streaming = true
+                    if (data?.epoch) state.training_percentage = data?.epoch;
+                    if (data?.epoch === 100) {
+                        let update_dir = state.dir_data?.map(item =>
+                            item.name === state.train_path ? { ...item, status: "trained" } : item
+                        )
+
+                        state.dir_data = update_dir
+                        state.is_streaming = false
+                    }
                     break;
 
-                case "failure": 
-                    break;
+                case "failure":
+                    state.is_streaming = false
 
                 default:
                     break;
@@ -207,7 +242,8 @@ function removeFolderByPath(nodes, pathToRemove) {
 export const {
     get_dir, train_modal, update_create_image_modal,
     create_update_modal, train_modal_path, delete_modal,
-    update_selected_modal_image, train_model_progress
+    update_selected_modal_image, train_model_progress,
+    deletion_data
 
 } = actions;
 

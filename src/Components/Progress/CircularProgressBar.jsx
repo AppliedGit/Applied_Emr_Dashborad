@@ -6,8 +6,8 @@ const CircularProgressBar = ({ percentage, size = 100, strokeWidth = 10 }) => {
   const progress = (percentage / 100) * circumference;
 
   let strokeColor = "#ff9999";
-  if (percentage > 75) strokeColor = "#90ee90";
-  else if (percentage > 50) strokeColor = "#ffff99";
+  // if (percentage > 75) strokeColor = "#90ee90";
+  // else if (percentage > 50) strokeColor = "#ffff99";
 
   return (
     <div

@@ -2,18 +2,16 @@ import ButtonComponent from 'Components/Button/Button';
 import React from 'react';
 import { useDispatch } from 'ResuableFunctions/CustomHooks';
 import Icons from 'Utils/Icons';
-import Image from 'Utils/Image';
 import { logout } from 'Views/Common/Slice/Common_slice';
 
-const Navbar = ({ onSearch }) => {
+const Navbar = () => {
   const dispatch = useDispatch();
 
   return (
-    <nav className="navbar navbar-expand-lg shadow-sm px-3 h-100  " style={{ backgroundColor: "#F4F9FD" }}>
+    <nav className="navbar navbar-expand-lg shadow-sm px-3 h-100" style={{ backgroundColor: "#F4F9FD" }}>
       <div className="container-fluid">
-        <a className="navbar-brand d-flex align-items-center fs-4" href="#">
-          <img src={Image?.CompanyLogo} alt="Emr" className='Emr-logo' />
-          <span className="Emr-heading ms-2">APPLIED</span>
+        <a className="navbar-brand d-flex align-items-center fs-4">
+          <span className='Emr-heading'>DCRM ANALYSIS AUTOMATION</span>
         </a>
 
         <button

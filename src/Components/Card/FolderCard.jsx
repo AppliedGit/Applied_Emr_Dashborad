@@ -4,9 +4,8 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import useCommonState, { useDispatch } from 'ResuableFunctions/CustomHooks';
 import Icons from 'Utils/Icons';
-import { handle_delete_data, handle_train_modal } from 'Views/Admin/Action/AdminAction';
-import { train_modal_path } from 'Views/Admin/Slice/Admin_slice';
-import { updateModalShow } from 'Views/Common/Slice/Common_slice';
+import { handle_delete_data, handle_train_model_progress } from 'Views/Admin/Action/AdminAction';
+import { deletion_data, train_modal_path } from 'Views/Admin/Slice/Admin_slice';
 
 const FolderCard = ({ item, is_under_tarining }) => {
   const { adminState } = useCommonState();
@@ -55,41 +54,47 @@ const FolderCard = ({ item, is_under_tarining }) => {
     }
   }
 
+  function handleFolderClick(item) {
+    switch (item?.status) {
+      case "train":
+        dispatch(train_modal_path(item?.name))
+        break;
+
+      case "training":
+        dispatch(handle_train_model_progress({ path: item?.name, show: 'training_status', is_streaming: adminState?.is_streaming }))
+        break;
+
+      default:
+        break;
+    }
+  }
+
   return (
     <>
       <div className="card shadow-sm border-0 p-3 h-100" style={{ borderRadius: "12px", background: "#FFF" }}>
-        <div className="d-flex justify-content-between align-items-center mb-1">
-          <div>
+        <div className="d-flex flex-wrap justify-content-between align-items-center mb-1">
+          <div className='col-12 col-md-8'>
             <h5 className="heading-1 mb-0">{item?.name || ''}</h5>
             <p className="text-muted small mb-0">Type: {item?.type || ''}</p>
           </div>
-          <div className='d-flex flex-column'>
+          <div className='col-12 col-md-4 d-flex justify-content-end'>
             <ButtonComponent
               type="button"
               className="btn"
               style={train_status(item?.status)}
-              buttonName={item?.status}
-              // btnDisable={adminState?.is_under_tarining}
-              clickFunction={!/training|trained/.test(item?.status) ?
-                () => dispatch(train_modal_path(item?.name))
-                :
-                null}
+              buttonName={item?.status ? item?.status?.charAt(0).toUpperCase() + item?.status?.slice(1) : ''}
+              btnDisable={adminState?.is_under_tarining && item?.status !== "training"}
+              clickFunction={() => handleFolderClick(item)}
             />
 
-            {
-              adminState?.delete_modal_data?.path === item?.path ?
-                <div className="mt-2 text-center">
-                  <SpinnerComponent variant="primary" spinner_width_height={20} />
-                </div>
-                :
-                <ButtonComponent
-                  type="button"
-                  className="btn btn-link text-danger p-0 mt-2"
-                  clickFunction={() => dispatch(handle_delete_data({ path: item?.path, from: 'folder_deletion' }))}
-                  buttonName="Delete"
-                  btnDisable={adminState?.delete_modal_data?.path}
-                />
-            }
+            <ButtonComponent
+              type="button"
+              className="btn py-2 ms-2"
+              style={{ backgroundColor: "#efefef9e" }}
+              clickFunction={() => dispatch(deletion_data({ path: item?.path, from: 'folder_deletion', type: 'Folder', name: item?.name }))}
+              buttonName={Icons?.Trash}
+              btnDisable={adminState?.delete_modal_data?.path}
+            />
           </div>
 
         </div>

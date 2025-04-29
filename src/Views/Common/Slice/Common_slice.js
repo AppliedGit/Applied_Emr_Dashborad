@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import Cookies from 'js-cookie'
 import { decryptData, encryptData } from "Security/Crypto/Crypto";
-import { create_update_modal, get_dir, train_modal, train_modal_path } from "Views/Admin/Slice/Admin_slice";
+import { create_update_modal, delete_modal, deletion_data, get_dir, train_modal, train_modal_path, train_model_progress } from "Views/Admin/Slice/Admin_slice";
 import { correction_predicting, start_predicting } from "Views/User/Slice/User_slice";
 
 const commonSlice = createSlice({
@@ -324,10 +324,51 @@ const commonSlice = createSlice({
             })
 
             .addCase(train_modal, (state, action) => {
-                state.moalSize = 'lg'
-                state.modal_from = 'Home'
-                state.modal_type = 'start_train'
+                const { type } = action.payload;
+
+                if (type === "response") {
+                    state.moalSize = 'lg'
+                    state.modal_from = 'Home'
+                    state.modal_type = 'start_train'
+                }
             })
+
+            .addCase(deletion_data, (state, action) => {
+                state.modalShow = true
+                state.moalSize = 'md'
+                state.modal_from = 'Home'
+                state.modal_type = 'delete_confirmation'
+            })
+
+            .addCase(delete_modal, (state, action) => {
+                const { type } = action.payload;
+
+                if (type === "response") {
+                    state.modalShow = false
+                    state.moalSize = null
+                    state.modal_from = null
+                    state.modal_type = null
+                }
+            })
+
+            .addMatcher(
+                function (action) {
+                    return [
+                        train_model_progress.toString(),
+                    ].includes(action.type)
+                },
+
+                (state, action) => {
+                    const { type } = action.payload
+
+                    if (type === "request") {
+                        state.modalShow = true
+                        state.moalSize = 'lg'
+                        state.modal_from = 'Home'
+                        state.modal_type = 'start_train'
+                    }
+                }
+            )
 
             .addMatcher(
                 function (action) {

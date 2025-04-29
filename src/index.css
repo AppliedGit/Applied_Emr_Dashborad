@@ -86,12 +86,21 @@
 }
 
 .user_home_height{
-    height: calc(100vh - 15.9rem);
+    height: calc(100vh - 17rem);
 }
 
 .train_command_prompt{
+    padding: 1rem 1.5rem;
+    overflow-y: scroll;
     height: 20rem;
     background-color: rgba(26, 25, 25, 0.899);
     border-radius: 12px;
     color: white;
 }
+
+.custom-textarea {
+    height: auto !important;
+    width: auto !important;
+    resize: both;
+  }
+  

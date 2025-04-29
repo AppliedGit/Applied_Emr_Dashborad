@@ -2,7 +2,7 @@ import ButtonComponent from "Components/Button/Button";
 import useCommonState, { useCustomNavigate, useDispatch } from "ResuableFunctions/CustomHooks";
 import ModalComponent from "Components/Modal/Modal";
 import { resetModalBox } from "Views/Common/Slice/Common_slice";
-import { handle_train_modal } from "Views/Admin/Action/AdminAction";
+import { handle_delete_data, handle_train_modal } from "Views/Admin/Action/AdminAction";
 import CircularProgressBar from "Components/Progress/CircularProgressBar";
 import { useEffect, useRef } from "react";
 import ButtonSpinner from "Components/Spinner/ButtonSpinner";
@@ -61,13 +61,40 @@ export function OverallModel() {
                                 />
                                 {
                                     adminState?.train_model_spinner ?
-                                        <ButtonSpinner title="training..." />
+                                        <ButtonSpinner title="training..." spinner_width_height="1.5rem" className="ms-3 btn-primary" />
                                         :
                                         <ButtonComponent
                                             type="button"
                                             className="btn btn-primary ms-3 px-5"
                                             buttonName="Yes"
                                             clickFunction={() => dispatch(handle_train_modal({ base_path: adminState?.train_path }))}
+                                        />
+                                }
+                            </div>
+                        </div>
+
+                    case "delete_confirmation":
+                        return <div className="col-12 row py-5">
+                            <div className="col-12">
+                                <h5 className="text-center">{`Are you sure you want to Delete`}</h5>
+                                <p className="text-center my-5">{adminState?.deletion_data?.type} - {adminState?.deletion_data?.name}</p>
+                            </div>
+                            <div className="col-12 d-flex justify-content-center">
+                                <ButtonComponent
+                                    type="button"
+                                    className="btn btn-primary px-5"
+                                    buttonName="No"
+                                    clickFunction={() => dispatch(resetModalBox())}
+                                />
+                                {
+                                    adminState?.delete_modal_spinner ?
+                                        <ButtonSpinner title="Deleting..." spinner_width_height="1.5rem" className="ms-3 btn-primary" />
+                                        :
+                                        <ButtonComponent
+                                            type="button"
+                                            className="btn btn-primary ms-3 px-5"
+                                            buttonName="Yes"
+                                            clickFunction={() => dispatch(handle_delete_data({ path: adminState?.deletion_data?.path, from: adminState?.deletion_data?.from }))}
                                         />
                                 }
                             </div>
@@ -81,14 +108,27 @@ export function OverallModel() {
                                     <p className="">{`Training model (${adminState?.train_path}) in progress...`}</p>
                                 </div>
                                 <div className="col-3 d-flex justify-content-end">
-                                    <CircularProgressBar percentage={1} size={80} />
+                                    <CircularProgressBar percentage={adminState?.training_percentage || 0} size={80} />
                                 </div>
                             </div>
 
                             <div className="w-100 row mt-3">
                                 <div className="train_command_prompt" ref={containerRef}>
-
+                                    {adminState?.traing_command_prompt?.map((item, index) => (
+                                        <div key={index} className="w-100 mb-2">
+                                            {JSON.stringify(item)}
+                                        </div>
+                                    ))}
                                 </div>
+                            </div>
+
+                            <div className="w-100 d-flex justify-content-center mt-3">
+                                <ButtonComponent
+                                    type="button"
+                                    className="btn btn-primary px-5 col-10"
+                                    buttonName="Close"
+                                    clickFunction={() => dispatch(resetModalBox())}
+                                />
                             </div>
                         </div>
 

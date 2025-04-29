@@ -219,12 +219,12 @@ const Userhome = () => {
   };
 
   return (
-    <div className="container py-4">
+    <div className="container pt-4">
       <h5 className="heading-1 mb-4 d-flex align-items-center gap-2">Compare Image</h5>
 
 
       {adminState?.dir_glow ?
-        <div className="row align-items-center justify-content-center" style={{ height: "45rem" }}>
+        <div className="row align-items-center justify-content-center" style={{ height: "42rem" }}>
           <div className="col-6 text-center">
             <SpinnerComponent variant="primary" />
             <p className='mt-1'>Collecting available models..</p>
@@ -324,7 +324,7 @@ const Userhome = () => {
           <div className="col-sm-12 col-md-6 user_home_height">
             <Card className="rounded-4 border-0 shadow-sm h-100">
               <Card.Header className="bg-transparent pt-3">
-                <Card.Title>Image Result</Card.Title>
+                <Card.Title>Image Pattern Results</Card.Title>
               </Card.Header>
 
               <Card.Body style={{ height: '100%', overflowY: 'scroll' }}>
@@ -357,7 +357,15 @@ const Userhome = () => {
                                     return <div className="mb-3">
                                       <h6 className="heading-2">{key}</h6>
                                       <div className="p-2">
-                                        <textarea cols={10} rows={8} className="form-control pe-none">{value || ''}</textarea>
+                                        <textarea rows={8} cols={65} className="form-control custom-textarea">{value || ''}</textarea>
+                                      </div>
+                                    </div>
+
+                                  case "predicted_class":
+                                    return <div className="mb-3">
+                                      <h6 className="heading-2">{key}</h6>
+                                      <div className="p-2">
+                                        <p>{value ? value.split("/").filter(Boolean).pop() : ''}</p>
                                       </div>
                                     </div>
 
@@ -381,13 +389,19 @@ const Userhome = () => {
               {!userState?.is_predicting && userState.predicted_data ?
                 <Card.Footer className="bg-transparent d-flex justify-content-end gap-2">
                   <ButtonComponent
-                    buttonName="No"
+                    buttonName="Add to image library"
                     className="btn-primary"
                     clickFunction={() => dispatch(update_user_data({ correct_prediction_modal: true }))}
                   />
 
                   <ButtonComponent
-                    buttonName="Yes"
+                    buttonName="Print Result"
+                    className="btn-primary"
+                    btnDisable={true}
+                  />
+
+                  <ButtonComponent
+                    buttonName="Next"
                     className="btn-primary"
                     clickFunction={() => dispatch(predicted_next_data())}
                     btnDisable={userState?.predicted_data?.length <= 1}
@@ -409,7 +423,7 @@ const Userhome = () => {
         <Modal.Body>
           <div className="d-flex gap-2 p-3">
             <div className="col-12 row">
-              {["Create new Folder", "Use Folder"]?.map((item, ind) =>
+              {["Create Class", "Use Class"]?.map((item, ind) =>
                 <div className="col" key={ind}>
                   <input
                     type="radio"
@@ -426,7 +440,7 @@ const Userhome = () => {
           </div>
 
           <div className="col-12 ps-3">
-            {userState?.user_data?.folder_type === "Create new Folder" ?
+            {userState?.user_data?.folder_type === "Create Class" ?
               <Fragment>
                 <label htmlFor='add_new_folder' className="form-label ps-2">Add New Folder</label>
                 <input
@@ -470,7 +484,7 @@ const Userhome = () => {
           <div className="col p-1">
             {
               userState?.correction_predicting_glow ?
-                <ButtonSpinner title="Submiting" spinner_width_height="1.1rem" />
+                <ButtonSpinner title="Submiting" spinner_width_height="1.1rem" className="ButtonSpinner" />
                 :
                 <ButtonComponent
                   buttonName="Submit"

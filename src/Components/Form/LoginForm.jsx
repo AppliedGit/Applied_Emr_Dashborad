@@ -64,14 +64,14 @@ const LoginForm = () => {
 
             {
                 buttonSpinner ?
-                    <ButtonSpinner title="Logging in" className="ps-3 btn-primary" spinner_width_height="1.5rem" />
+                    <ButtonSpinner title="Logging in" className="w-100 ps-3 btn-primary" spinner_width_height="1.5rem" />
                     :
                     <ButtonComponent
                         type="button"
                         className="btn-md btn-primary w-100"
                         clickFunction={handleSubmit}
-                        title="Login"
-                        buttonName="Login"
+                        title="Log in"
+                        buttonName="Log in"
                     />
             }
         </Form>

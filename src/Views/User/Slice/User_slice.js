@@ -35,6 +35,7 @@ const userSlice = createSlice({
           state.is_predicting = false
           state.predicted_data = data
           state.predicted_single_data = data?.length ? [data[0]] : []
+          state.user_data.folder_type = "Use Class"
           break;
 
         case "failure":

@@ -7,7 +7,7 @@ import { reset_logout_triggered } from '../Slice/Common_slice'
 
 const Login = () => {
   const dispatch = useDispatch()
-  
+
   useEffect(() => {
     dispatch(reset_logout_triggered())
   }, [])
@@ -25,18 +25,15 @@ const Login = () => {
                   width="120rem"
                   height="40rem"
                 />
-                {/* <h2 style={{ color: 'red', fontWeight: 'bold', letterSpacing: "2px" }}>EMR</h2> */}
-                {/* <h1 style={{ fontWeight: "500", color: "#2D9AE5",fontSize:"28px" }}>APPLIED</h1> */}
-
               </div>
             </div>
             <LoginForm />
-
-            <div className="text-center mt-4">
-              <small className="text-muted" >
-                Developed by <span style={{ color: "#2D9AE5" }}>Applied Automation</span>
-              </small>
-            </div>
+          </div>
+          <div className='text-center mb-4'>
+            <span className='text-muted'>Developed by</span>
+            <a href="http://www.aaspl.net" className='ps-1' target="_blank" rel="noopener noreferrer">
+              Applied Automation
+            </a>
           </div>
         </div>
       </div>

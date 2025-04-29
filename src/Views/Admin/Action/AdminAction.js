@@ -33,7 +33,7 @@ export const handle_train_modal = params => async (dispatch) => {
 
             if (data?.error_code === 200) {
                 dispatch(handle_train_model_progress({ path: params?.base_path, message: data?.message || '' }))
-                dispatch(train_modal({ type: "response" }))
+                dispatch(train_modal({ type: "response", data }))
             }
             else {
                 dispatch(train_modal({ type: "failure", message: data?.message }))
@@ -46,28 +46,72 @@ export const handle_train_modal = params => async (dispatch) => {
     }
 }
 
-export const handle_train_model_progress = params => async (dispatch) => {
-    console.log(params)
+export const handle_train_model_progress = (params) => async (dispatch) => {
     if (params?.path) {
         try {
-            dispatch(train_model_progress({ type: "request", data: params?.path }))
+            dispatch(train_model_progress({ type: "request", data: params }));
 
-            const { data } = await axiosInstance.get("/train_model_progress", params)
+            //is_streaming is used to check if the stream is already running
+            if (params?.is_streaming) return
 
-            if (data?.error_code === 200) {
-                console.log(data)
-                // dispatch(train_model_progress({ type: "response", data: data }))
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/train_model_progress`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'text/event-stream',
+                }
+            });
+
+            if (!response.ok) throw new Error('Network response was not ok');
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder('utf-8');
+            let buffer = '';
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) {
+                    dispatch(train_model_progress({ type: "response", data: { message: 'Stream ended.' } }));
+                    break;
+                }
+
+                buffer += decoder.decode(value, { stream: true });
+
+                let lines = buffer.split('\n\n');
+                buffer = lines.pop();
+
+                for (const line of lines) {
+                    const trimmedLine = line.trim();
+
+                    if (trimmedLine.startsWith('data: ')) {
+                        let jsonStr = trimmedLine.slice(6);
+
+                        if (jsonStr.startsWith("{") && jsonStr.endsWith("}")) {
+                            jsonStr = jsonStr.replace(/'/g, '"');
+
+                            try {
+                                const data = JSON.parse(jsonStr);
+                                dispatch(train_model_progress({ type: "response", data: data }));
+                            } catch (err) {
+                                console.error('Failed to parse JSON chunk:', jsonStr, err);
+                                dispatch(train_model_progress({ type: "failure", message: err }));
+                            }
+                        } else {
+                            console.error('Invalid JSON format detected:', jsonStr);
+                        }
+                    }
+                }
             }
-            else {
-                dispatch(train_model_progress({ type: "failure", message: data?.message }))
-            }
-        } catch (Err) {
-            dispatch(train_model_progress({ type: "failure", message: Err?.message }))
+
+        } catch (err) {
+            console.error('Stream fetch error:', err);
+            dispatch(train_model_progress({ type: "failure", message: err?.message }));
         }
     } else {
-        dispatch(train_model_progress({ type: "failure", message: 'Base path required' }))
+        dispatch(train_model_progress({ type: "failure", message: 'Base path required' }));
     }
 }
+
+
 
 export const handle_create_update_modal = params => async (dispatch) => {
     let correct_error_code = params?.endpoint == '/create_class' ? 201 : 200;

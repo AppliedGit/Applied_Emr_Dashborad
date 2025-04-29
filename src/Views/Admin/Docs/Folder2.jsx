@@ -2,11 +2,11 @@ import React, { useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import Icons from 'Utils/Icons';
 import ImageDetailsModal from './ImageDetailsModal';
-import { handle_delete_data, handle_get_dir } from '../Action/AdminAction';
+import { handle_get_dir } from '../Action/AdminAction';
 import useCommonState, { useDispatch } from 'ResuableFunctions/CustomHooks';
 import SpinnerComponent from 'Components/Spinner/Spinner';
 import ButtonComponent from 'Components/Button/Button';
-import { update_selected_modal_image } from '../Slice/Admin_slice';
+import { deletion_data, update_selected_modal_image } from '../Slice/Admin_slice';
 
 const Folder2 = () => {
     const { folder, file } = useParams();
@@ -16,7 +16,7 @@ const Folder2 = () => {
 
     useEffect(() => {
         dispatch(handle_get_dir(`${folder}/${file}`))
-    }, [])
+    }, []);
 
     const get_files = (files) => {
         return Array.isArray(files)
@@ -83,15 +83,16 @@ const Folder2 = () => {
                         + Create Image Model
                     </button>
                 </div>
+
                 {adminState?.dir_glow ?
-                    <div className="row align-items-center justify-content-center" style={{ height: "45rem" }}>
+                    <div className="row align-items-center justify-content-center" style={{ height: "43rem" }}>
                         <div className="col-6 text-center">
                             <SpinnerComponent variant="primary" />
                             <p className='mt-1'>Collecting data..</p>
                         </div>
                     </div>
                     :
-                    <div className="table-responsive mt-5 p-3" style={{ backgroundColor: "#FFFFFF", border: "12px" }}>
+                    <div className="table-responsive mt-5 p-3" style={{ backgroundColor: "#FFFFFF", border: "12px", height: "41rem" }}>
                         <div className="d-flex align-items-center gap-2 ">
                             <Link
                                 to="/admin_dashboard"
@@ -132,18 +133,14 @@ const Folder2 = () => {
                                                 />
                                             </td>
                                             <td className='text-center'>
-                                                {
-                                                    adminState?.delete_modal_data?.path === item?.path ?
-                                                        <SpinnerComponent variant="primary" spinner_width_height={20} />
-                                                        :
-                                                        <ButtonComponent
-                                                            type="button"
-                                                            className="btn btn-link text-danger p-0"
-                                                            clickFunction={() => dispatch(handle_delete_data({ path: item?.path, from: 'image_folder_deletion' }))}
-                                                            buttonName="Delete"
-                                                            btnDisable={adminState?.delete_modal_data?.path}
-                                                        />
-                                                }
+                                                <ButtonComponent
+                                                    type="button"
+                                                    className="btn py-2 ms-2"
+                                                    style={{ backgroundColor: "#efefef9e" }}
+                                                    clickFunction={() => dispatch(deletion_data({ path: item?.path, from: 'image_folder_deletion', type: 'Folder', name: item?.name }))}
+                                                    buttonName={Icons?.Trash}
+                                                    btnDisable={adminState?.delete_modal_data?.path}
+                                                />
                                             </td>
                                         </tr>
                                     ))}
