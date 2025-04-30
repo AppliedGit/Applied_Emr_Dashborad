@@ -220,8 +220,9 @@ const Userhome = () => {
 
   return (
     <div className="container pt-4">
-      <h5 className="heading-1 mb-4 d-flex align-items-center gap-2">Compare Image</h5>
-
+      <div className="w-100 mb-3 ps-2">
+        <img src={Image?.CompanyLogo} alt="Emr" className='Emr-logo' />
+      </div>
 
       {adminState?.dir_glow ?
         <div className="row align-items-center justify-content-center" style={{ height: "42rem" }}>
@@ -235,7 +236,7 @@ const Userhome = () => {
           <div className="col-sm-12 col-md-6 user_home_height">
             <Card className="rounded-4 border-0 shadow-sm h-100">
               <Card.Header className="bg-transparent pt-3">
-                <Card.Title>Upload Inputs</Card.Title>
+                <h5 className="heading-1 d-flex align-items-center gap-2">Compare Image</h5>
               </Card.Header>
               <Card.Body style={{ height: '100%', overflowY: 'scroll' }}>
                 <Form.Group className="mb-3">
@@ -324,7 +325,7 @@ const Userhome = () => {
           <div className="col-sm-12 col-md-6 user_home_height">
             <Card className="rounded-4 border-0 shadow-sm h-100">
               <Card.Header className="bg-transparent pt-3">
-                <Card.Title>Image Pattern Results</Card.Title>
+                <h5 className="heading-1 d-flex align-items-center gap-2">Image Pattern Results</h5>
               </Card.Header>
 
               <Card.Body style={{ height: '100%', overflowY: 'scroll' }}>
