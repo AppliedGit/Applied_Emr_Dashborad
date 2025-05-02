@@ -139,7 +139,7 @@ const Userhome = () => {
                 type="button"
                 className="file-action-btn w-100 text-danger"
                 clickFunction={() => DeleteSelectFile(id)}
-                buttonName="Delete"
+                buttonName={Icons?.Trash}
               />
             </div>
           </div>
@@ -173,7 +173,7 @@ const Userhome = () => {
                 type="button"
                 className="file-action-btn w-100 text-danger"
                 clickFunction={() => DeleteSelectFile(id, isImage)}
-                buttonName="Delete"
+                buttonName={Icons?.Trash}
               />
             </div>
           </div>

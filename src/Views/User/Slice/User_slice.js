@@ -80,20 +80,15 @@ const userSlice = createSlice({
     builder
 
       .addMatcher(
-        function (action) {
-          [
-            get_dir.toString()
-          ].includes(action.type)
-        },
-
+        (action) => [get_dir.toString()].includes(action.type),
         (state, action) => {
+
           if (action?.payload?.type === "request") {
-            state.user_data = {}
-            state.predicted_data = []
-            state.predicted_single_data = []
+            state.user_data = {};
+            state.predicted_data = [];
+            state.predicted_single_data = [];
           }
-        }
-      )
+        })
   }
 });
 
