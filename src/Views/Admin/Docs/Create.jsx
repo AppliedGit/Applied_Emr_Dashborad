@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Icons from 'Utils/Icons';
 import ButtonComponent from 'Components/Button/Button';
 import { Link } from 'react-router-dom';
@@ -12,6 +12,7 @@ import SpinnerComponent from 'Components/Spinner/Spinner';
 const Create = () => {
   const { adminState } = useCommonState();
   const dispatch = useDispatch();
+  const imageInputRef = useRef();
 
   useEffect(() => {
     dispatch(handle_get_dir())
@@ -20,6 +21,10 @@ const Create = () => {
   const handleDelete = (indexToRemove) => {
     const updated = [...adminState.create_image_modal.images];
     updated.splice(indexToRemove, 1);
+
+    if (imageInputRef.current && !updated?.length) {
+      imageInputRef.current.value = null;
+    }
     dispatch(update_create_image_modal({ images: updated }));
   };
 
@@ -124,6 +129,7 @@ const Create = () => {
                   className="position-absolute top-0 start-0 w-100 h-100 opacity-0"
                   onChange={(e) => dispatch(update_create_image_modal({ images: e.target.files }))}
                   multiple
+                  ref={imageInputRef}
                 />
                 <div className="d-flex flex-column justify-content-center align-items-center h-100">
                   <div>{Icons.Browse}</div>

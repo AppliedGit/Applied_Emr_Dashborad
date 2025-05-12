@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { Card, Form, Modal } from 'react-bootstrap';
 import { FaRegFile } from 'react-icons/fa';
@@ -16,6 +16,8 @@ import Icons from 'Utils/Icons';
 
 const Userhome = () => {
   const dispatch = useDispatch();
+  const imageInputRef = useRef();
+  const fileInputRef = useRef();
   const { adminState, userState } = useCommonState();
   const normalize = (str) => str?.toLowerCase().replace(/[\s_]+/g, '');
 
@@ -25,6 +27,7 @@ const Userhome = () => {
 
   function upload_image(e, type) {
     const selectedFiles = Array.from(e.target.files);
+    console.log(selectedFiles, type)
 
     if (type === "image") {
       const existingImageUI = userState?.user_data?.image_show_ui || [];
@@ -48,6 +51,7 @@ const Userhome = () => {
       const existingExcelFiles = Array.from(userState?.user_data?.excel_file || []);
       let newFileUI = [];
 
+      console.log(selectedFiles)
       Promise.all(selectedFiles.map((file) => readFile(file)))
         .then((results) => {
           newFileUI = [...existingFileUI, ...results];
@@ -99,6 +103,10 @@ const Userhome = () => {
           newImages.push(userState?.user_data?.images[i]);
         }
       }
+
+      if (imageInputRef.current && !result?.length) {
+        imageInputRef.current.value = null;
+      }
       dispatch(update_user_data({ image_show_ui: result, images: newImages }));
     }
     else {
@@ -109,6 +117,10 @@ const Userhome = () => {
         if (overallFile.includes(userState?.user_data?.excel_file[i].name)) {
           newFiles.push(userState?.user_data?.excel_file[i]);
         }
+      }
+
+      if (fileInputRef.current && !result?.length) {
+        fileInputRef.current.value = null;
       }
       dispatch(update_user_data({ files_show_ui: result, excel_file: newFiles }));
     }
@@ -199,7 +211,6 @@ const Userhome = () => {
         if (node.path === display_floder_path) {
           return node;
         }
-
       }
 
       if (node.type === 'folder') return display_folders(node.children || []);
@@ -273,6 +284,7 @@ const Userhome = () => {
                       className="position-absolute top-0 start-0 w-100 h-100 opacity-0"
                       onChange={(e) => upload_image(e, "image")}
                       multiple
+                      ref={imageInputRef}
                     />
                     <div className="d-flex align-items-center h-100">
                       <div className='col-2'>{Icons.Browse}</div>
@@ -294,6 +306,7 @@ const Userhome = () => {
                       className="position-absolute top-0 start-0 w-100 h-100 opacity-0"
                       onChange={(e) => upload_image(e, "file")}
                       multiple
+                      ref={fileInputRef}
                     />
                     <div className="d-flex align-items-center h-100">
                       <div className='col-2'>
