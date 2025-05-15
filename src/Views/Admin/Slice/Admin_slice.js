@@ -202,11 +202,16 @@ const adminSlice = createSlice({
                     if (data?.show !== "training_status") state.traing_command_prompt = [...state.traing_command_prompt, data]
                     break;
 
-                case "response":
-                    state.traing_command_prompt = [...state.traing_command_prompt, data]
+                case "response": 
+                    const updatedPrompt = [...state.traing_command_prompt]
+                        .filter((item) => item?.epoch !== data?.epoch || item?.message !== data?.message);
+
+                    updatedPrompt.push(data);
+                    state.traing_command_prompt = updatedPrompt;
+
                     state.is_streaming = true
                     if (data?.epoch) state.training_percentage = data?.epoch;
-                    if (data?.epoch === 100) {
+                    if (data?.message === "Training completed") {
                         let update_dir = state.dir_data?.map(item =>
                             item.name === state.train_path ? { ...item, status: "trained" } : item
                         )

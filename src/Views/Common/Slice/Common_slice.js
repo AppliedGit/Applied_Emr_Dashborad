@@ -316,6 +316,17 @@ const commonSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
+            .addCase(train_model_progress, (state, action) => {
+                const { message } = action.payload
+
+                if(message === "Training completed") {
+                    state.modalShow = false
+                    state.moalSize = null
+                    state.modal_from = null
+                    state.modal_type = null
+                }
+            })
+            
             .addCase(train_modal_path, (state, action) => {
                 state.modalShow = true
                 state.moalSize = 'md'
