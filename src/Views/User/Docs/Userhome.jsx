@@ -350,7 +350,7 @@ const Userhome = () => {
                     </div>
                   </div>
                   :
-                  !userState?.predicted_data ?
+                  !userState?.predicted_data?.length ?
                     <div className="text-muted h-100 d-flex flex-column align-items-center justify-content-center" style={{ minHeight: '500px' }}>
                       <img src={Image?.image_loader} alt="Upload Placeholder" style={{ maxHeight: 150 }} />
                       <p className="mt-2">No image loaded yet</p>
@@ -405,7 +405,7 @@ const Userhome = () => {
                   <ButtonComponent
                     buttonName="Add to image library"
                     className="btn-primary"
-                    clickFunction={() => dispatch(update_user_data({ correct_prediction_modal: true }))}
+                    clickFunction={() => dispatch(update_user_data({ correct_prediction_modal: true, folder_type: "Use Class", selected_folder: null }))}
                   />
 
                   <ButtonComponent
@@ -498,7 +498,7 @@ const Userhome = () => {
           <div className="col p-1">
             {
               userState?.correction_predicting_glow ?
-                <ButtonSpinner title="Submiting" spinner_width_height="1.1rem" className="ButtonSpinner" />
+                <ButtonSpinner title="Submiting" spinner_width_height="1.1rem" className="ButtonSpinner w-100" />
                 :
                 <ButtonComponent
                   buttonName="Submit"

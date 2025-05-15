@@ -4,7 +4,9 @@ import { get_dir } from 'Views/Admin/Slice/Admin_slice';
 const userSlice = createSlice({
   name: 'user slice',
   initialState: {
-    user_data: {}
+    user_data: {
+      folder_type: "Use Class"
+    }
   },
   reducers: {
     update_user_data(state, action) {
