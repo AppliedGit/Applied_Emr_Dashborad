@@ -20,7 +20,7 @@ function App() {
     <Fragment>
       <ToastContainer theme='light' />
 
-      <BrowserRouter basename={import.meta.env.BASE_URL}>
+      <BrowserRouter>
         <Routes>
           <Route element={<InitializeProjectSetup />}>
             <Route path="/" element={<Login />} />

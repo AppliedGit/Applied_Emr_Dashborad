@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 import path from 'path'
 
 export default defineConfig({
-  base: '/Applied_Emr_Dashborad',
+  base: '/',
   plugins: [react()],
   resolve: {
     alias: {
