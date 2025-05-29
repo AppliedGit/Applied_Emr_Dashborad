@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Card, Form, Modal } from 'react-bootstrap';
 import { FaRegFile } from 'react-icons/fa';
@@ -10,14 +10,20 @@ import ButtonComponent from 'Components/Button/Button';
 import SpinnerComponent from 'Components/Spinner/Spinner';
 import Image from 'Utils/Image';
 import { handle_correction_predicting, handle_start_predicting } from '../Action/UserAction';
-import Img from 'Components/Img/Img';
 import ButtonSpinner from 'Components/Spinner/ButtonSpinner';
 import Icons from 'Utils/Icons';
+import Input from 'Components/Input/Input';
+import PrintPage from './PrintPage';
 
 const Userhome = () => {
   const dispatch = useDispatch();
   const { adminState, userState } = useCommonState();
   const normalize = (str) => str?.toLowerCase().replace(/[\s_]+/g, '');
+
+  const [showPrintModal, setShowPrintModal] = useState(false);
+  // const [showPrint, setShowPrint] = useState(false);
+
+
 
   useEffect(() => {
     dispatch(handle_get_dir())
@@ -219,26 +225,306 @@ const Userhome = () => {
   };
 
   return (
+    // <div className="container pt-4">
+    //   <div className="w-100 mb-3 ps-2">
+    //     <img src={Image?.CompanyLogo} alt="Emr" className='Emr-logo' />
+    //   </div>
+
+    //   {adminState?.dir_glow ?
+    //     <div className="row align-items-center justify-content-center" style={{ height: "42rem" }}>
+    //       <div className="col-6 text-center">
+    //         <SpinnerComponent variant="primary" />
+    //         <p className='mt-1'>Collecting available models..</p>
+    //       </div>
+    //     </div>
+    //     :
+    //     <div className="row g-4 align-items-stretch">
+    //       <div className="col-sm-12 col-md-6 user_home_height">
+    //         <Card className="rounded-4 border-0 shadow-sm h-100">
+    //           <Card.Header className="bg-transparent pt-3">
+    //             <h5 className="heading-1 d-flex align-items-center gap-2">Compare Image</h5>
+    //           </Card.Header>
+    //           <Card.Body style={{ height: '100%', overflowY: 'scroll' }}>
+    //             <Form.Group className="mb-3">
+    //               <h6 className="form-label heading-2">Image Model Ref</h6>
+    //               <Form.Select
+    //                 value={userState?.user_data?.modal || ''}
+    //                 onChange={(e) => dispatch(update_user_data({ modal: e.target.value }))}
+    //               >
+    //                 <option value="">Select a Model</option>
+    //                 {
+    //                   adminState?.dir_glow ?
+    //                     null
+    //                     :
+    //                     adminState?.dir_data?.length ?
+    //                       adminState?.dir_data?.map((item, index) => (
+    //                         item.status === 'trained' ?
+    //                           <option value={item?.name} key={index}>{item?.name || ''}</option>
+    //                           :
+    //                           null
+    //                       ))
+    //                       :
+    //                       null
+    //                 }
+    //               </Form.Select>
+    //             </Form.Group>
+
+    //             <Form.Group className="mb-4">
+    //               <h6 className="form-label heading-2">Upload Image</h6>
+    //               <div className="border rounded position-relative text-center p-4 mb-3"
+    //                 style={{ borderStyle: 'dashed', height: '100px' }} >
+    //                 <input
+    //                   type="file"
+    //                   accept="image/*"
+    //                   className="position-absolute top-0 start-0 w-100 h-100 opacity-0"
+    //                   onChange={(e) => upload_image(e, "image")}
+    //                   multiple
+    //                 />
+    //                 <div className="d-flex align-items-center h-100">
+    //                   <div className='col-2'>{Icons.Browse}</div>
+    //                   <p className="text-muted mb-0">Drop file or Browse</p>
+    //                 </div>
+    //               </div>
+    //             </Form.Group>
+    //             {userState?.user_data?.image_show_ui?.map((data, index) => {
+    //               return file_function(data, index)
+    //             })}
+
+    //             <Form.Group className="mb-3">
+    //               <h6 className="form-label heading-2">Upload CSV File</h6>
+    //               <div className="border rounded position-relative text-center p-4 mb-3"
+    //                 style={{ borderStyle: 'dashed', height: '100px' }} >
+    //                 <input
+    //                   type="file"
+    //                   accept=".ods, .xls, .xlsx"
+    //                   className="position-absolute top-0 start-0 w-100 h-100 opacity-0"
+    //                   onChange={(e) => upload_image(e, "file")}
+    //                   multiple
+    //                 />
+    //                 <div className="d-flex align-items-center h-100">
+    //                   <div className='col-2'>
+    //                     {Icons.Browse}
+    //                   </div>
+    //                   <div className="col-10 text-start">
+    //                     <p className="text-muted mb-0">Drop file or Browse</p>
+    //                     <p className="text-secondary mb-0">Format: ods, xls</p>
+    //                   </div>
+    //                 </div>
+    //               </div>
+    //             </Form.Group>
+    //             {userState?.user_data?.files_show_ui?.map((data, index) => {
+    //               return file_function(data, index)
+    //             })}
+    //           </Card.Body>
+
+    //           <Card.Footer className="bg-transparent d-flex justify-content-end gap-2">
+    //             <ButtonComponent
+    //               buttonName="Next"
+    //               className="btn-primary"
+    //               clickFunction={() => dispatch(handle_start_predicting(userState?.user_data))}
+    //               btnDisable={userState?.is_predicting}
+    //             />
+    //           </Card.Footer>
+    //         </Card>
+    //       </div>
+
+    //       <div className="col-sm-12 col-md-6 user_home_height">
+    //         <Card className="rounded-4 border-0 shadow-sm h-100">
+    //           <Card.Header className="bg-transparent pt-3">
+    //             <h5 className="heading-1 d-flex align-items-center gap-2">Image Pattern Results</h5>
+    //           </Card.Header>
+
+    //           <Card.Body style={{ height: '100%', overflowY: 'scroll' }}>
+    //             {userState?.is_predicting ?
+    //               <div className='h-100 row align-items-center justify-content-center'>
+    //                 <div className="col-8 text-center">
+    //                   <SpinnerComponent />
+    //                   <p className="mt-2">Predicting...</p>
+    //                 </div>
+    //               </div>
+    //               :
+    //               !userState?.predicted_data ?
+    //                 <div className="text-muted h-100 d-flex flex-column align-items-center justify-content-center" style={{ minHeight: '500px' }}>
+    //                   <img src={Image?.image_loader} alt="Upload Placeholder" style={{ maxHeight: 150 }} />
+    //                   <p className="mt-2">No image loaded yet</p>
+    //                 </div>
+    //                 :
+    //                 <div className='col-12'>
+    //                   {
+    //                     userState?.predicted_single_data?.map((item, index) => (
+    //                       <Fragment>
+    //                         <div className="col-12 text-center mb-3">
+    //                           <Img src={matchedImage(item?.filename)?.fileimage || ''} alt="prediction response" width="90%" height="280rem" />
+    //                         </div>
+
+    //                         {Object.entries(item).map(([key, value]) => {
+    //                           if (key !== "corrected") {
+    //                             switch (key) {
+    //                               case "output":
+    //                                 return <div className="mb-3">
+    //                                   <h6 className="heading-2">{key}</h6>
+    //                                   <div className="p-2">
+    //                                     <textarea rows={8} cols={65} className="form-control custom-textarea">{value || ''}</textarea>
+    //                                   </div>
+    //                                 </div>
+
+    //                               case "predicted_class":
+    //                                 return <div className="mb-3">
+    //                                   <h6 className="heading-2">{key}</h6>
+    //                                   <div className="p-2">
+    //                                     <p>{value ? value.split("/").filter(Boolean).pop() : ''}</p>
+    //                                   </div>
+    //                                 </div>
+
+    //                               default:
+    //                                 return <div className="mb-3">
+    //                                   <h6 className="heading-2">{key}</h6>
+    //                                   <div className="p-2">
+    //                                     <p>{value || ''}</p>
+    //                                   </div>
+    //                                 </div>
+    //                             }
+    //                           }
+    //                         })}
+    //                       </Fragment>
+    //                     ))
+    //                   }
+    //                 </div>
+    //             }
+    //           </Card.Body>
+
+    //           {!userState?.is_predicting && userState.predicted_data ?
+    //             <Card.Footer className="bg-transparent d-flex justify-content-end gap-2">
+    //               <ButtonComponent
+    //                 buttonName="Add to image library"
+    //                 className="btn-primary"
+    //                 clickFunction={() => dispatch(update_user_data({ correct_prediction_modal: true }))}
+    //               />
+
+    //               <ButtonComponent
+    //                 buttonName="Print Result"
+    //                 className="btn-primary"
+    //                 btnDisable={true}
+    //               />
+
+    //               <ButtonComponent
+    //                 buttonName="Next"
+    //                 className="btn-primary"
+    //                 clickFunction={() => dispatch(predicted_next_data())}
+    //                 btnDisable={userState?.predicted_data?.length <= 1}
+    //               />
+    //             </Card.Footer>
+    //             :
+    //             null
+    //           }
+    //         </Card>
+    //       </div>
+    //     </div>
+    //   }
+
+    //   {/* Modal */}
+    //   <Modal show={userState?.user_data?.correct_prediction_modal} centered onHide={() => dispatch(update_user_data({ correct_prediction_modal: false }))}>
+    //     <Modal.Header closeButton>
+    //       <h5 className="modal-title">Select Class Name</h5>
+    //     </Modal.Header>
+    //     <Modal.Body>
+    //       <div className="d-flex gap-2 p-3">
+    //         <div className="col-12 row">
+    //           {["Create Class", "Use Class"]?.map((item, ind) =>
+    //             <div className="col" key={ind}>
+    //               <input
+    //                 type="radio"
+    //                 name="modal"
+    //                 value={item}
+    //                 id={item + ind}
+    //                 onChange={(e) => dispatch(update_user_data({ folder_type: e.target.value }))}
+    //                 checked={item === userState?.user_data?.folder_type}
+    //               />
+    //               <label htmlFor={item + ind} className="form-label ps-2">{item}</label>
+    //             </div>
+    //           )}
+    //         </div>
+    //       </div>
+
+    //       <div className="col-12 ps-3">
+    //         {userState?.user_data?.folder_type === "Create Class" ?
+    //           <Fragment>
+    //             <label htmlFor='add_new_folder' className="form-label ps-2">Add New Folder</label>
+    //             <input
+    //               type="text"
+    //               id='add_new_folder'
+    //               className="form-control"
+    //               placeholder="Add New Image Model Ref"
+    //               value={userState?.user_data?.selected_folder}
+    //               onChange={(e) => dispatch(update_user_data({ selected_folder: e.target.value }))}
+    //             />
+    //           </Fragment>
+    //           :
+    //           <Fragment>
+    //             <h6>Existing folders</h6>
+    //             {display_folders(adminState?.dir_data)[0]?.children?.map((item, index) => (
+    //               <div className="form-check" key={index}>
+    //                 <input
+    //                   className="form-check-input"
+    //                   type="radio"
+    //                   name="classOptions"
+    //                   id={item?.name}
+    //                   value={item?.name}
+    //                   defaultChecked={item?.name === userState?.user_data?.selected_folder}
+    //                   onChange={(e) => dispatch(update_user_data({ selected_folder: e.target.value }))}
+    //                 />
+    //                 <label className="form-check-label" htmlFor={item?.name}>{item?.name}</label>
+    //               </div>
+    //             ))}
+    //           </Fragment>
+    //         }
+    //       </div>
+    //     </Modal.Body>
+    //     <Modal.Footer className="d-flex justify-content-between">
+    //       <div className="col p-1">
+    //         <ButtonComponent
+    //           buttonName="Cancel"
+    //           className="btn-secondary w-100"
+    //           clickFunction={() => dispatch(update_user_data({ correct_prediction_modal: false }))}
+    //         />
+    //       </div>
+    //       <div className="col p-1">
+    //         {
+    //           userState?.correction_predicting_glow ?
+    //             <ButtonSpinner title="Submiting" spinner_width_height="1.1rem" className="ButtonSpinner" />
+    //             :
+    //             <ButtonComponent
+    //               buttonName="Submit"
+    //               className="btn-primary w-100"
+    //               clickFunction={handleCorrectPrediction}
+    //             />
+    //         }
+    //       </div>
+    //     </Modal.Footer>
+    //   </Modal>
+    // </div>
     <div className="container pt-4">
       <div className="w-100 mb-3 ps-2">
         <img src={Image?.CompanyLogo} alt="Emr" className='Emr-logo' />
       </div>
+      <hr />
 
-      {adminState?.dir_glow ?
-        <div className="row align-items-center justify-content-center" style={{ height: "42rem" }}>
+      {adminState?.dir_glow ? (
+        <div className="row align-items-center justify-content-center" style={{ height: "49rem" }}>
           <div className="col-6 text-center">
             <SpinnerComponent variant="primary" />
             <p className='mt-1'>Collecting available models..</p>
           </div>
         </div>
-        :
-        <div className="row g-4 align-items-stretch">
-          <div className="col-sm-12 col-md-6 user_home_height">
+      ) : (
+        <div className="row g-4">
+          {/* Left Card */}
+          <div className="col-12 col-md-6 mb-4 mb-md-0">
             <Card className="rounded-4 border-0 shadow-sm h-100">
               <Card.Header className="bg-transparent pt-3">
                 <h5 className="heading-1 d-flex align-items-center gap-2">Compare Image</h5>
               </Card.Header>
-              <Card.Body style={{ height: '100%', overflowY: 'scroll' }}>
+              <Card.Body className="overflow-auto" style={{ maxHeight: '70vh' }}>
                 <Form.Group className="mb-3">
                   <h6 className="form-label heading-2">Image Model Ref</h6>
                   <Form.Select
@@ -246,27 +532,15 @@ const Userhome = () => {
                     onChange={(e) => dispatch(update_user_data({ modal: e.target.value }))}
                   >
                     <option value="">Select a Model</option>
-                    {
-                      adminState?.dir_glow ?
-                        null
-                        :
-                        adminState?.dir_data?.length ?
-                          adminState?.dir_data?.map((item, index) => (
-                            item.status === 'trained' ?
-                              <option value={item?.name} key={index}>{item?.name || ''}</option>
-                              :
-                              null
-                          ))
-                          :
-                          null
-                    }
+                    {adminState?.dir_data?.map((item, index) => (
+                      item.status === 'trained' && <option key={index} value={item?.name}>{item?.name}</option>
+                    ))}
                   </Form.Select>
                 </Form.Group>
 
                 <Form.Group className="mb-4">
                   <h6 className="form-label heading-2">Upload Image</h6>
-                  <div className="border rounded position-relative text-center p-4 mb-3"
-                    style={{ borderStyle: 'dashed', height: '100px' }} >
+                  <div className="border rounded position-relative text-center p-3 d-flex flex-column justify-content-center align-items-center" style={{ borderStyle: 'dashed', height: '100px' }}>
                     <input
                       type="file"
                       accept="image/*"
@@ -274,20 +548,15 @@ const Userhome = () => {
                       onChange={(e) => upload_image(e, "image")}
                       multiple
                     />
-                    <div className="d-flex align-items-center h-100">
-                      <div className='col-2'>{Icons.Browse}</div>
-                      <p className="text-muted mb-0">Drop file or Browse</p>
-                    </div>
+                    <div className='mb-2'>{Icons.Browse}</div>
+                    <p className="text-muted mb-0 text-center small">Drop file or Browse</p>
                   </div>
                 </Form.Group>
-                {userState?.user_data?.image_show_ui?.map((data, index) => {
-                  return file_function(data, index)
-                })}
+                {userState?.user_data?.image_show_ui?.map((data, index) => file_function(data, index))}
 
                 <Form.Group className="mb-3">
                   <h6 className="form-label heading-2">Upload CSV File</h6>
-                  <div className="border rounded position-relative text-center p-4 mb-3"
-                    style={{ borderStyle: 'dashed', height: '100px' }} >
+                  <div className="border rounded position-relative text-center p-3 d-flex flex-column justify-content-center align-items-center" style={{ borderStyle: 'dashed', height: '100px' }}>
                     <input
                       type="file"
                       accept=".ods, .xls, .xlsx"
@@ -295,23 +564,14 @@ const Userhome = () => {
                       onChange={(e) => upload_image(e, "file")}
                       multiple
                     />
-                    <div className="d-flex align-items-center h-100">
-                      <div className='col-2'>
-                        {Icons.Browse}
-                      </div>
-                      <div className="col-10 text-start">
-                        <p className="text-muted mb-0">Drop file or Browse</p>
-                        <p className="text-secondary mb-0">Format: ods, xls</p>
-                      </div>
-                    </div>
+                    <div className='mb-2'>{Icons.Browse}</div>
+                    <p className="text-muted mb-0 text-center small">Drop file or Browse (Format: ods, xls)</p>
                   </div>
                 </Form.Group>
-                {userState?.user_data?.files_show_ui?.map((data, index) => {
-                  return file_function(data, index)
-                })}
+                {userState?.user_data?.files_show_ui?.map((data, index) => file_function(data, index))}
               </Card.Body>
 
-              <Card.Footer className="bg-transparent d-flex justify-content-end gap-2">
+              <Card.Footer className="bg-transparent d-flex flex-wrap justify-content-end gap-2">
                 <ButtonComponent
                   buttonName="Next"
                   className="btn-primary"
@@ -322,83 +582,74 @@ const Userhome = () => {
             </Card>
           </div>
 
-          <div className="col-sm-12 col-md-6 user_home_height">
+          {/* Right Card */}
+          <div className="col-12 col-md-6 user_home_height">
             <Card className="rounded-4 border-0 shadow-sm h-100">
               <Card.Header className="bg-transparent pt-3">
                 <h5 className="heading-1 d-flex align-items-center gap-2">Image Pattern Results</h5>
               </Card.Header>
-
-              <Card.Body style={{ height: '100%', overflowY: 'scroll' }}>
-                {userState?.is_predicting ?
+              <Card.Body className="overflow-auto" style={{ maxHeight: '70vh' }}>
+                {userState?.is_predicting ? (
                   <div className='h-100 row align-items-center justify-content-center'>
                     <div className="col-8 text-center">
                       <SpinnerComponent />
                       <p className="mt-2">Predicting...</p>
                     </div>
                   </div>
-                  :
-                  !userState?.predicted_data ?
-                    <div className="text-muted h-100 d-flex flex-column align-items-center justify-content-center" style={{ minHeight: '500px' }}>
-                      <img src={Image?.image_loader} alt="Upload Placeholder" style={{ maxHeight: 150 }} />
-                      <p className="mt-2">No image loaded yet</p>
-                    </div>
-                    :
-                    <div className='col-12'>
-                      {
-                        userState?.predicted_single_data?.map((item, index) => (
-                          <Fragment>
-                            <div className="col-12 text-center mb-3">
-                              <Img src={matchedImage(item?.filename)?.fileimage || ''} alt="prediction response" width="90%" height="280rem" />
+                ) : !userState?.predicted_data ? (
+                  <div className="text-muted h-100 d-flex flex-column align-items-center justify-content-center" style={{ minHeight: '500px' }}>
+                    <img src={Image?.image_loader} alt="Upload Placeholder" style={{ maxHeight: 150 }} />
+                    <p className="mt-2">No image loaded yet</p>
+                  </div>
+                ) : (
+                  <div className='col-12'>
+                    {userState?.predicted_single_data?.map((item, index) => (
+                      <Fragment key={index}>
+                        <div className="col-12 text-center mb-3">
+                          <img src={matchedImage(item?.filename)?.fileimage || ''} alt="prediction response" className="img-fluid rounded" />
+                        </div>
+                        {Object.entries(item).map(([key, value]) => (
+                          key !== "corrected" && (
+                            <div className="mb-3" key={key}>
+                              <h6 className="heading-2">{key}</h6>
+                              <div className="p-2">
+                                {key === 'output' ? (
+                                  <textarea rows={8} className="form-control custom-textarea">{value}</textarea>
+                                ) : (
+                                  <p>{key === 'predicted_class' ? value?.split("/").filter(Boolean).pop() : value}</p>
+                                )}
+                              </div>
                             </div>
-
-                            {Object.entries(item).map(([key, value]) => {
-                              if (key !== "corrected") {
-                                switch (key) {
-                                  case "output":
-                                    return <div className="mb-3">
-                                      <h6 className="heading-2">{key}</h6>
-                                      <div className="p-2">
-                                        <textarea rows={8} cols={65} className="form-control custom-textarea">{value || ''}</textarea>
-                                      </div>
-                                    </div>
-
-                                  case "predicted_class":
-                                    return <div className="mb-3">
-                                      <h6 className="heading-2">{key}</h6>
-                                      <div className="p-2">
-                                        <p>{value ? value.split("/").filter(Boolean).pop() : ''}</p>
-                                      </div>
-                                    </div>
-
-                                  default:
-                                    return <div className="mb-3">
-                                      <h6 className="heading-2">{key}</h6>
-                                      <div className="p-2">
-                                        <p>{value || ''}</p>
-                                      </div>
-                                    </div>
-                                }
-                              }
-                            })}
-                          </Fragment>
-                        ))
-                      }
-                    </div>
-                }
+                          )
+                        ))}
+                      </Fragment>
+                    ))}
+                  </div>
+                )}
               </Card.Body>
 
-              {!userState?.is_predicting && userState.predicted_data ?
-                <Card.Footer className="bg-transparent d-flex justify-content-end gap-2">
+              {!userState?.is_predicting && userState?.predicted_data && (
+                <Card.Footer className="bg-transparent d-flex flex-wrap justify-content-end gap-2">
                   <ButtonComponent
                     buttonName="Add to image library"
                     className="btn-primary"
                     clickFunction={() => dispatch(update_user_data({ correct_prediction_modal: true }))}
                   />
+                  {/* <ButtonComponent
+                    buttonName="Print Result"
+                    className="btn-primary"
+                    clickFunction={() => setShowPrintModal(true)}
 
+                  /> */}
                   <ButtonComponent
                     buttonName="Print Result"
                     className="btn-primary"
-                    btnDisable={true}
+                    clickFunction={() => setShowPrintModal(true)}
+                  />
+
+                  <PrintPage
+                    show={showPrintModal}
+                    onHide={() => setShowPrintModal(false)}
                   />
 
                   <ButtonComponent
@@ -408,13 +659,11 @@ const Userhome = () => {
                     btnDisable={userState?.predicted_data?.length <= 1}
                   />
                 </Card.Footer>
-                :
-                null
-              }
+              )}
             </Card>
           </div>
         </div>
-      }
+      )}
 
       {/* Modal */}
       <Modal show={userState?.user_data?.correct_prediction_modal} centered onHide={() => dispatch(update_user_data({ correct_prediction_modal: false }))}>
@@ -422,27 +671,23 @@ const Userhome = () => {
           <h5 className="modal-title">Select Class Name</h5>
         </Modal.Header>
         <Modal.Body>
-          <div className="d-flex gap-2 p-3">
-            <div className="col-12 row">
-              {["Create Class", "Use Class"]?.map((item, ind) =>
-                <div className="col" key={ind}>
-                  <input
-                    type="radio"
-                    name="modal"
-                    value={item}
-                    id={item + ind}
-                    onChange={(e) => dispatch(update_user_data({ folder_type: e.target.value }))}
-                    checked={item === userState?.user_data?.folder_type}
-                  />
-                  <label htmlFor={item + ind} className="form-label ps-2">{item}</label>
-                </div>
-              )}
-            </div>
-          </div>
+          <div className="row gy-3 px-2">
+            {['Create Class', 'Use Class'].map((item, ind) => (
+              <div className="col-6" key={ind}>
+                <input
+                  type="radio"
+                  name="modal"
+                  value={item}
+                  id={item + ind}
+                  onChange={(e) => dispatch(update_user_data({ folder_type: e.target.value }))}
+                  checked={item === userState?.user_data?.folder_type}
+                />
+                <label htmlFor={item + ind} className="form-label ps-2">{item}</label>
+              </div>
+            ))}
 
-          <div className="col-12 ps-3">
-            {userState?.user_data?.folder_type === "Create Class" ?
-              <Fragment>
+            {userState?.user_data?.folder_type === 'Create Class' ? (
+              <div className="col-12">
                 <label htmlFor='add_new_folder' className="form-label ps-2">Add New Folder</label>
                 <input
                   type="text"
@@ -452,9 +697,9 @@ const Userhome = () => {
                   value={userState?.user_data?.selected_folder}
                   onChange={(e) => dispatch(update_user_data({ selected_folder: e.target.value }))}
                 />
-              </Fragment>
-              :
-              <Fragment>
+              </div>
+            ) : (
+              <div className="col-12">
                 <h6>Existing folders</h6>
                 {display_folders(adminState?.dir_data)[0]?.children?.map((item, index) => (
                   <div className="form-check" key={index}>
@@ -470,33 +715,30 @@ const Userhome = () => {
                     <label className="form-check-label" htmlFor={item?.name}>{item?.name}</label>
                   </div>
                 ))}
-              </Fragment>
-            }
+              </div>
+            )}
           </div>
         </Modal.Body>
-        <Modal.Footer className="d-flex justify-content-between">
-          <div className="col p-1">
+        <Modal.Footer className="d-flex justify-content-between flex-wrap">
+          <ButtonComponent
+            buttonName="Cancel"
+            className="btn-secondary w-100 mb-2 mb-sm-0 me-sm-2"
+            clickFunction={() => dispatch(update_user_data({ correct_prediction_modal: false }))}
+          />
+          {userState?.correction_predicting_glow ? (
+            <ButtonSpinner title="Submitting" spinner_width_height="1.1rem" className="ButtonSpinner w-100" />
+          ) : (
             <ButtonComponent
-              buttonName="Cancel"
-              className="btn-secondary w-100"
-              clickFunction={() => dispatch(update_user_data({ correct_prediction_modal: false }))}
+              buttonName="Submit"
+              className="btn-primary w-100"
+              clickFunction={handleCorrectPrediction}
             />
-          </div>
-          <div className="col p-1">
-            {
-              userState?.correction_predicting_glow ?
-                <ButtonSpinner title="Submiting" spinner_width_height="1.1rem" className="ButtonSpinner" />
-                :
-                <ButtonComponent
-                  buttonName="Submit"
-                  className="btn-primary w-100"
-                  clickFunction={handleCorrectPrediction}
-                />
-            }
-          </div>
+          )}
         </Modal.Footer>
       </Modal>
+
     </div>
+
   );
 };
 

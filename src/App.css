@@ -249,3 +249,78 @@ body {
 
 
 /* userpage */
+.Emr-logo {
+    max-height: 40px;
+}
+
+.Easun_mr {
+    width: 14rem !important;
+    height: 62px !important;
+    aspect-ratio: 97/28 !important;
+}
+
+
+
+
+@media (max-width: 768px) {
+    .navbar-brand span {
+        font-size: 1rem;
+    }
+}
+
+
+/* table */
+.custom-header th {
+    background-color: #c9202a !important;
+    color: white !important;
+
+}
+
+
+
+.container-8 {
+    max-width: 800px;
+    margin: auto;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+
+}
+
+strong {
+    color: #003366;
+}
+
+.img-fluid {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+.full-width-text {
+    width: 100%;
+    text-align: justify;
+}
+
+
+.image-box {
+    max-width: 600px;
+    margin: 0 auto;
+    border: 2px solid #ccc;
+    background-color: #f9f9f9;
+}
+
+.a4-print-page {
+    overflow: hidden !important;
+    page-break-inside: avoid !important;
+}
+
+
+@media print {
+    .no-print {
+        display: none !important;
+    }
+
+    .d-print-block {
+        display: block !important;
+    }
+}
