@@ -55,6 +55,7 @@ const adminSlice = createSlice({
                         }
 
                         state.create_image_modal.folder_name = value;
+                        state.create_image_modal.images = [];
                         break;
                     }
 
@@ -62,6 +63,7 @@ const adminSlice = createSlice({
                         state.create_image_modal.modal_type = value;
                         state.create_image_modal.endpoint = value === "Create new model" ? "/create_class" : "/upload_image";
                         state.create_image_modal.folder_name = "";
+                        state.create_image_modal.images = [];
                         state.create_image_modal.class_names = [];
                         state.create_image_modal.no_of_classes = 0;
                         break;
@@ -78,6 +80,7 @@ const adminSlice = createSlice({
                             state.create_image_modal.no_of_classes = class_names_array?.length || 0;
                         }
                         state.create_image_modal.new_class_name = "";
+                        state.create_image_modal.images = [];
                         break;
                     }
 

@@ -3,24 +3,10 @@ import { Modal, Button } from 'react-bootstrap';
 import PrintableReport from './PrintableReport';
 import Images from "Utils/Image"
 
-
-
 function ReportModal({ show, onHide, indexData, Image }) {
     const componentRef = useRef();
 
     function handlePrint() {
-        const inputs = document.getElementsByTagName('input');
-
-        for (let input of inputs) {
-            input.classList.add('border-0');
-        }
-
-        window.onafterprint = function () {
-            for (let input of inputs) {
-                input.classList.remove('border-0');
-            }
-        };
-
         window.print();
     }
 
@@ -33,14 +19,10 @@ function ReportModal({ show, onHide, indexData, Image }) {
                         <img src={Images?.Easun} alt="Easun" className="Easun_mr" style={{ maxHeight: '50px' }} />
                     </div>
                 </Modal.Header>
-                <Modal.Body>
-
-                    <div className="d-print-block scrollable" >
+                <Modal.Body id="modal-content">
+                    <div className="d-print-block scrollable scrollable" >
                         <PrintableReport ref={componentRef} indexData={indexData} Image={Image} />
                     </div>
-                    {/* <div className="d-print-none scrollable">
-                        <PrintableReport ref={componentRef} indexData={indexData} Image={Image} />
-                    </div> */}
                 </Modal.Body>
                 <Modal.Footer className="d-print-none">
                     <Button variant="secondary" onClick={onHide}>Close</Button>

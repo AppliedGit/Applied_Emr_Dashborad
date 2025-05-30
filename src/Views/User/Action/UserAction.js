@@ -7,12 +7,12 @@ import {
 
 export const handle_start_predicting = params => async (dispatch) => {
   const fd = new FormData();
-  if (!params?.modal || !params?.images || !params?.excel_file) dispatch(start_predicting({ type: 'failure', message: 'Please fill in all fileds' }))
+  if (!params?.modal || !params?.prediction_images || !params?.excel_file) dispatch(start_predicting({ type: 'failure', message: 'Please fill in all fileds' }))
 
   else {
     fd.append("folder_name", params?.modal)
-    for (let i = 0; i < params?.images.length; i++) {
-      fd.append('images', params?.images[i]);
+    for (let i = 0; i < params?.prediction_images.length; i++) {
+      fd.append('images', params?.prediction_images[i]);
     }
 
     for (let j = 0; j < params?.excel_file.length; j++) {
