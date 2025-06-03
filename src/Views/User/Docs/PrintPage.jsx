@@ -1,10 +1,9 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import PrintableReport from './PrintableReport';
 import Images from "Utils/Image"
 
 function ReportModal({ show, onHide, indexData, Image }) {
-    const componentRef = useRef();
 
     function handlePrint() {
         window.print();
@@ -21,7 +20,7 @@ function ReportModal({ show, onHide, indexData, Image }) {
                 </Modal.Header>
                 <Modal.Body id="modal-content">
                     <div className="d-print-block scrollable scrollable" >
-                        <PrintableReport ref={componentRef} indexData={indexData} Image={Image} />
+                        <PrintableReport indexData={indexData} Image={Image} />
                     </div>
                 </Modal.Body>
                 <Modal.Footer className="d-print-none">
