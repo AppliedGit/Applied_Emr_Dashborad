@@ -124,7 +124,6 @@ const Userhome = () => {
     if (isStringType) {
       const fileName = data?.split("/").pop();
       const isImage = fileName?.match(/\.(jpg|jpeg|png|gif|svg)$/i);
-
       return (
         <div className="file-atc-box w-100" key={index}>
           <div className="file-image">
@@ -391,11 +390,11 @@ const Userhome = () => {
 
                   {/* {
                     userState?.user_data?.phase === "B Phase Lower Direction" && */}
-                    <ButtonComponent
-                      buttonName="Print Result"
-                      className="btn-primary"
-                      clickFunction={() => setShowPrintModal(true)}
-                    />
+                  <ButtonComponent
+                    buttonName="Print Result"
+                    className="btn-primary"
+                    clickFunction={() => setShowPrintModal(true)}
+                  />
                   {/* } */}
 
                   <PrintPage

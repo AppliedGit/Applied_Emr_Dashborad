@@ -7,12 +7,19 @@ import {
 
 export const handle_start_predicting = params => async (dispatch) => {
   const fd = new FormData();
-  if (!params?.modal || !params?.prediction_images || !params?.excel_file) dispatch(start_predicting({ type: 'failure', message: 'Please fill in all fileds' }))
+  console.log(params)
+  if (!params?.modal || !params?.phase || !params?.prediction_image?.length || !params?.excel_file?.length || !params?.upload_image?.length) dispatch(start_predicting({ type: 'failure', message: 'Please fill in all fileds' }))
 
   else {
     fd.append("folder_name", params?.modal)
-    for (let i = 0; i < params?.prediction_images.length; i++) {
-      fd.append('images', params?.prediction_images[i]);
+    fd.append("phase", params?.phase)
+
+    for (let i = 0; i < params?.upload_image.length; i++) {
+      fd.append('upload_image', params?.upload_image[i]);
+    }
+
+    for (let i = 0; i < params?.prediction_image.length; i++) {
+      fd.append('prediction_image', params?.prediction_image[i]);
     }
 
     for (let j = 0; j < params?.excel_file.length; j++) {
@@ -37,8 +44,8 @@ export const handle_start_predicting = params => async (dispatch) => {
 
 export const handle_correction_predicting = params => async (dispatch) => {
   const fd = new FormData();
-  if (!params?.class_name || !params?.send_image) dispatch(correction_predicting({ type: 'failure', message: 'Please fill in all fileds' }))
 
+  if (!params?.class_name || !params?.send_image) dispatch(correction_predicting({ type: 'failure', message: 'Please fill in all fileds' }))
   else {
     fd.append("class_name", params?.class_name)
     fd.append("user_response", 'no')
