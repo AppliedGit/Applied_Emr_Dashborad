@@ -396,14 +396,14 @@ const Userhome = () => {
                     clickFunction={() => dispatch(update_user_data({ correct_prediction_modal: true, folder_type: "Use Class" }))}
                   />
 
-                  {
-                    userState?.user_data?.phase === "B_Phase_Lower_Direction" && userState?.predicted_data?.length &&
+                  {/* {
+                    userState?.user_data?.phase === "B_Phase_Lower_Direction" && userState?.predicted_data?.length && */}
                     <ButtonComponent
                       buttonName="Print Result"
                       className="btn-primary"
                       clickFunction={handleprint}
                     />
-                  }
+                  {/* } */}
 
                   <PrintPage
                     show={showPrintModal}

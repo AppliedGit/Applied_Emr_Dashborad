@@ -35,26 +35,28 @@ const PrintableTransformerTable = () => {
 
     return (
         <div className='container'>
-            <h4 className="text-white text-center py-2 bg-danger">TRANSFORMER DETAILS</h4>
-            <table className="table table-bordered" >
-                <tbody>
-                    {transformerFields.map(({ label, placeholder, type = 'text' }, index) => (
-                        <tr key={index}>
-                            <th style={{ width: '30%' }}>
-                                {label} <span className="text-danger">*</span>
-                            </th>
-                            <td data-value="">
-                                <input
-                                    type={type}
-                                    className="form-control"
-                                    placeholder={placeholder}
-                                    defaultValue=""
-                                />
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+            <div className='print-center-page'>
+                <h4 className="text-white text-center py-2 bg-danger ">TRANSFORMER DETAILS</h4>
+                <table className="table table-bordered" >
+                    <tbody>
+                        {transformerFields.map(({ label, placeholder, type = 'text' }, index) => (
+                            <tr key={index}>
+                                <th style={{ width: '30%' }}>
+                                    {label} <span className="text-danger">*</span>
+                                </th>
+                                <td data-value="">
+                                    <input
+                                        type={type}
+                                        className="form-control"
+                                        placeholder={placeholder}
+                                        defaultValue=""
+                                    />
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 };

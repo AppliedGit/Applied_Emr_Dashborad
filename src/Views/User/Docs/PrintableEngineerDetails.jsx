@@ -7,7 +7,7 @@ const PrintableEngineerDetails = () => {
     ];
 
     return (
-        <div className="container page-break">
+        <div className="mt-2">
             <h4 className="text-white text-center py-2 bg-danger">ENGINEER DETAILS</h4>
             <table className="table table-bordered">
                 <tbody>

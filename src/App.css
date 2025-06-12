@@ -277,7 +277,6 @@ body {
 }
 
 
-
 .container-8 {
     max-width: 800px;
     margin: auto;
@@ -388,46 +387,72 @@ body {
 
 
 @media print {
-  /* Add page break before every .page-break section */
-  .page-break {
-    page-break-before: always;
-    break-before: page;
-  }
 
-  /* Hide scrollbars, borders, modal controls etc. */
-  .modal, 
-  .modal-dialog,
-  .modal-content {
-    all: unset;
-  }
+    .page-break {
+        page-break-before: always;
+        break-before: page;
+        display: block;
+    }
 
-  /* Ensure full-width printable content */
-  #modal-content {
-    width: 100%;
-    padding: 0;
-    margin: 0;
-  }
+    .phase-block {
+        display: block !important;
+        page-break-inside: avoid;
+    }
 
-  /* Remove padding/margin from print sections */
-  .container, .row, .col, .table {
-    margin: 0 !important;
-    padding: 0 !important;
-  }
+    .modal,
+    .modal-dialog,
+    .modal-content {
+        all: unset;
+    }
 
-  /* Inputs appear as plain text */
-  input {
-    border: none !important;
-    background: none !important;
-    pointer-events: none;
-  }
+    #modal-content {
+        width: 100%;
+        padding: 0;
+        margin: 0;
+    }
 
-  /* Optional: Display input value as text during print */
-  td[data-value]:before {
-    content: attr(data-value);
-    white-space: pre-wrap;
-  }
+    .container,
+    .row,
+    .col,
+    .table {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
 
-  td input {
-    display: none;
+
+    input {
+        border: none !important;
+        background: none !important;
+        pointer-events: none;
+    }
+
+
+    td[data-value]:before {
+        content: attr(data-value);
+        white-space: pre-wrap;
+    }
+
+    td input {
+        display: none;
+    }
+}
+
+.analysis-text {
+    font-size: 18px;
+    text-align: justify;
+    line-height: 1.6;
+    margin-top: 8px;
+    margin-bottom: 16px;
+    color: #333;
+    font-family: 'Segoe UI';
+}
+
+@media print {
+  .print-center-page {
+    height: 170mm !important; 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    page-break-after: always;
   }
 }
