@@ -1,5 +1,72 @@
 import React, { forwardRef } from 'react';
 import Image from 'Utils/Image';
+import PrintableTable from './PrintableTable';
+import PrintableTransformerTable from './PrintableTransformerTable';
+import PrintableOltcTable from './PrintableOltcTable';
+import PrintableEngineerDetails from './PrintableEngineerDetails';
+import Chart from './Chart';
+
+
+
+
+const phaseData = [
+    {
+        phase: "R PhaseB Phase Lower Direction- Raise Direction",
+        phase_image: "path/to/phase_image1.png",
+        analysis: "This phase involves raising the R phase in the specified direction.",
+        motor_current_profile_image: "path/to/motor_current_profile.jpg",
+        motor_current_profile_analysis: "The motor current profile shows the current flow during the R phase raise operation.",
+        switching_time_image: "path/to/switching_time.jpg",
+        switching_time_analysis: "The switching time indicates the duration taken to switch the R phase to the raised position.",
+    },
+    {
+        phase: "R Phase – Lower Direction",
+        phase_image: "path/to/phase_image1.png",
+        analysis: "This phase involves raising the R phase in the specified direction.",
+        motor_current_profile_image: "path/to/motor_current_profile.jpg",
+        motor_current_profile_analysis: "The motor current profile shows the current flow during the R phase raise operation.",
+        switching_time_image: "path/to/switching_time.jpg",
+        switching_time_analysis: "The switching time indicates the duration taken to switch the R phase to the raised position.",
+    },
+    {
+        phase: "Y Phase – Raise Direction",
+        phase_image: "path/to/phase_image1.png",
+        analysis: "This phase involves raising the R phase in the specified direction.",
+        motor_current_profile_image: "path/to/motor_current_profile.jpg",
+        motor_current_profile_analysis: "The motor current profile shows the current flow during the R phase raise operation.",
+        switching_time_image: "path/to/switching_time.jpg",
+        switching_time_analysis: "The switching time indicates the duration taken to switch the R phase to the raised position.",
+    },
+    {
+        phase: "Y Phase - Lower Direction",
+        phase_image: "path/to/phase_image1.png",
+        analysis: "This phase involves raising the R phase in the specified direction.",
+        motor_current_profile_image: "path/to/motor_current_profile.jpg",
+        motor_current_profile_analysis: "The motor current profile shows the current flow during the R phase raise operation.",
+        switching_time_image: "path/to/switching_time.jpg",
+        switching_time_analysis: "The switching time indicates the duration taken to switch the R phase to the raised position.",
+    },
+    {
+        phase: "B Phase - Raise Direction",
+        phase_image: "path/to/phase_image1.png",
+        analysis: "This phase involves raising the R phase in the specified direction.",
+        motor_current_profile_image: "path/to/motor_current_profile.jpg",
+        motor_current_profile_analysis: "The motor current profile shows the current flow during the R phase raise operation.",
+        switching_time_image: "path/to/switching_time.jpg",
+        switching_time_analysis: "The switching time indicates the duration taken to switch the R phase to the raised position.",
+    },
+    {
+        phase: "B Phase - Lower Direction",
+        phase_image: "path/to/phase_image1.png",
+        analysis: "This phase involves raising the R phase in the specified direction.",
+        motor_current_profile_image: "path/to/motor_current_profile.jpg",
+        motor_current_profile_analysis: "The motor current profile shows the current flow during the R phase raise operation.",
+        switching_time_image: "path/to/switching_time.jpg",
+        switching_time_analysis: "The switching time indicates the duration taken to switch the R phase to the raised position.",
+    },
+
+];
+
 
 const PrintableReport = forwardRef(
     (
@@ -14,34 +81,17 @@ const PrintableReport = forwardRef(
         ref
     ) => {
         return (
-            <div ref={ref} className="a4-print-page p-4">
+            <div ref={ref} className="a4-print-page p-4 pt-0">
+                <div className="w-100 d-flex justify-content-between align-items-center position-sticky top-0 bg-white py-4 print_page_header">
+                    <img src={Image?.CompanyLogo} alt="Logo" className="Emr-logo" style={{ maxHeight: '35px' }} />
+                    <img src={Image?.Easun} alt="Easun" className="Easun_mr" style={{ maxHeight: '50px' }} />
+                </div>
                 <div className="text-center mb-4">
                     <h2 className="heading-1">DCRM REPORT</h2>
                 </div>
 
                 <div className="container mt-4">
-                    <form>
-                        {[
-                            { label: 'Customer Name', name: 'customerName' },
-                            { label: 'Address', name: 'address' },
-                            { label: 'Work Order Number', name: 'workOrderNumber' },
-                            { label: 'Date of Test', name: 'dateOfTest', type: 'date' },
-                        ].map(({ label, name, type = 'text' }, idx) => (
-                            <div className="row mb-3" key={idx}>
-                                <label className="col-sm-3 col-form-label">
-                                    {label}<span className="text-danger"> *</span>
-                                </label>
-                                <div className="col-sm-9">
-                                    <input
-                                        type={type}
-                                        className="form-control"
-                                        name={name}
-                                        required
-                                    />
-                                </div>
-                            </div>
-                        ))}
-                    </form>
+                  <PrintableTable/>
                 </div>
 
                 <div className="container mt-5 my-4">
@@ -67,55 +117,11 @@ const PrintableReport = forwardRef(
                 </div>
 
                 <div className="page-break container mt-5">
-                    <h4 className="text-white text-center py-2 bg-danger">TRANSFORMER DETAILS</h4>
-                    <form>
-                        {[
-                            { label: 'Manufacturer Name', placeholder: 'PRIME MEIDAN' },
-                            { label: 'Power Rating', placeholder: 'MVA' },
-                            { label: 'Voltage Rating', placeholder: '0 kV' },
-                            { label: 'Vector Group', placeholder: 'YNyn0' },
-                            { label: 'Number of Phases', placeholder: '0', type: 'number' },
-                            { label: 'Rated Frequency', placeholder: '0 Hz' },
-                            {
-                                label: 'Serial Number',
-                                placeholder: 'W01-107160089/G-01/13/16/00148',
-                            },
-                            { label: 'Special Remarks', placeholder: '-' },
-                        ].map(({ label, placeholder, type = 'text' }, idx) => (
-                            <div className="row mb-3" key={idx}>
-                                <label className="col-sm-3 col-form-label">{label} <span className="text-danger">*</span></label>
-                                <div className="col-sm-9">
-                                    <input type={type} className="form-control" placeholder={placeholder} />
-                                </div>
-                            </div>
-                        ))}
-                    </form>
+                    <PrintableTransformerTable/>
                 </div>
 
                 <div className="page-break container mt-5">
-                    <h4 className="text-white text-center py-2 bg-danger">OLTC DETAILS</h4>
-                    <form>
-                        {[
-                            { label: 'Manufacturer Name', placeholder: 'PRIME MEIDAN' },
-                            { label: 'OLTC Serial Number', placeholder: 'OLTC Serial Number' },
-                            {
-                                label: 'OLTC Model (Resistive/Reactor/Vacuum/Oil Cooled)',
-                                placeholder: 'OLTC Model',
-                            },
-                            {
-                                label: 'OLTC Type Designation (If Known)',
-                                placeholder: 'Example :( M III 500 Y 123/C 10.19.3W)',
-                            },
-                            { label: 'Special Remarks', placeholder: 'Special Remarks' },
-                        ].map(({ label, placeholder }, idx) => (
-                            <div className="row mb-3" key={idx}>
-                                <label className="col-sm-3 col-form-label">{label} <span className="text-danger">*</span></label>
-                                <div className="col-sm-9">
-                                    <input type="text" className="form-control" placeholder={placeholder} />
-                                </div>
-                            </div>
-                        ))}
-                    </form>
+                    <PrintableOltcTable/>
                 </div>
 
                 <div className="container mt-4 py-4">
@@ -206,7 +212,49 @@ const PrintableReport = forwardRef(
                         ))}
                     </div>
                 </div>
-            </div>
+                <div className="container page-break mt-5">
+                    <h3 className="text-center heading-1 mb-4 text-danger">Phase Analysis</h3>
+
+                    {phaseData.map((phase, idx) => (
+                        <div key={idx} className="mb-5 page-break">
+                            <h4 className="heading-1 text-center text-primary">{phase.phase}</h4>
+                            <div className="text-center my-3">
+                                <img src={Image.Phaseimage1} alt={`${phase.phase}`} className="img-fluid" />
+                            </div>
+                            <p className="text-justify">{phase.analysis}</p>
+                            <h5 className="mt-4 heading-1 text-danger">Motor Current Profile</h5>
+                            <div className="text-center my-3">
+                                <img src={Image.Motor} alt="Motor Current Profile" className="img-fluid" />
+                            </div>
+                            <p className="text-justify">{phase.motor_current_profile_analysis}</p>
+                            <h5 className="mt-4 heading-1 text-danger">Switching Time</h5>
+                            <div className="text-center my-3">
+                                <Chart/>
+                            </div>
+                            <p className="text-justify">{phase.switching_time_analysis}</p>
+                        </div>
+                    ))}
+                </div>
+                <div className='container'>
+                    <div className="row">
+                        <div className="col-12">
+                            <h4 className="mb-4 heading-1">Conclusion</h4>
+                            <p className="full-width-text">
+                                From these recorded Waveforms, it is clear that the Motor Drive Mechanism, Energy Accumulator and the Transition Resistor are OKAY.
+                            </p>
+                            <p className="full-width-text">
+                                All of Diverter and Selector Contacts also looks healthy and ready to do Tap change operation On-load.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div className="container mt-4">
+                 <PrintableEngineerDetails/>
+                </div>
+
+            </div >
         );
     }
 );

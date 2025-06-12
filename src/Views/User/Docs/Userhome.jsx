@@ -9,7 +9,7 @@ import ShortUniqueId from 'short-unique-id';
 import ButtonComponent from 'Components/Button/Button';
 import SpinnerComponent from 'Components/Spinner/Spinner';
 import Image from 'Utils/Image';
-import { handle_correction_predicting, handle_start_predicting } from '../Action/UserAction';
+import { handle_correction_predicting, handle_start_predicting, handleGetPrintData } from '../Action/UserAction';
 import ButtonSpinner from 'Components/Spinner/ButtonSpinner';
 import Icons from 'Utils/Icons';
 import PrintPage from './PrintPage';
@@ -123,7 +123,7 @@ const Userhome = () => {
 
     if (isStringType) {
       const fileName = data?.split("/").pop();
-      const isImage = fileName?.match(/\.(jpg|jpeg|png|gif|svg)$/i);
+      const isImage = fileName?.match(/\.(jpg|jpeg|png|gif|svg|bmp)$/i);
       return (
         <div className="file-atc-box w-100" key={index}>
           <div className="file-image">
@@ -150,7 +150,7 @@ const Userhome = () => {
       );
     } else {
       const { id, filename, fileimage, datetime, filesize } = data;
-      const isImage = filename?.match(/\.(jpg|jpeg|png|gif|svg)$/i);
+      const isImage = filename?.match(/\.(jpg|jpeg|png|gif|svg|bmp)$/i);
 
       return (
         <div className="file-atc-box w-100" key={id || index}>
@@ -262,7 +262,7 @@ const Userhome = () => {
                     onChange={(e) => dispatch(update_user_data({ phase: e.target.value }))}
                   >
                     {userState?.phases?.map((item, index) => (
-                      <option key={index} value={item} disabled={item !== userState?.user_data?.phase}>{item}</option>
+                      <option key={index} value={item?.replaceAll(" ", "_")} disabled={item !== userState?.user_data?.phase}>{item}</option>
                     ))}
                   </Form.Select>
                 </Form.Group>
@@ -327,7 +327,6 @@ const Userhome = () => {
                   buttonName="Predict"
                   className="btn-primary"
                   clickFunction={() => dispatch(handle_start_predicting(userState?.user_data))}
-                  btnDisable={userState?.is_predicting}
                 />
               </Card.Footer>
             </Card>
@@ -340,18 +339,18 @@ const Userhome = () => {
                 <h5 className="heading-1 d-flex align-items-center gap-2">Image Pattern Results</h5>
               </Card.Header>
               <Card.Body className="overflow-auto" style={{ maxHeight: '70vh' }}>
-                {!userState?.predicted_data?.length ?
-                  <div className="text-muted h-100 d-flex flex-column align-items-center justify-content-center" style={{ minHeight: '500px' }}>
-                    <img src={Image?.image_loader} alt="Upload Placeholder" style={{ maxHeight: 150 }} />
-                    <p className="mt-2">No image loaded yet</p>
+                {userState?.is_predicting ?
+                  <div className='h-100 row align-items-center justify-content-center'>
+                    <div className="col-8 text-center">
+                      <SpinnerComponent />
+                      <p className="mt-2">Predicting...</p>
+                    </div>
                   </div>
                   :
-                  userState?.is_predicting ?
-                    <div className='h-100 row align-items-center justify-content-center'>
-                      <div className="col-8 text-center">
-                        <SpinnerComponent />
-                        <p className="mt-2">Predicting...</p>
-                      </div>
+                  !userState?.predicted_data?.length ?
+                    <div className="text-muted h-100 d-flex flex-column align-items-center justify-content-center" style={{ minHeight: '500px' }}>
+                      <img src={Image?.image_loader} alt="Upload Placeholder" style={{ maxHeight: 150 }} />
+                      <p className="mt-2">No image loaded yet</p>
                     </div>
                     :
                     <div className='col-12'>
@@ -366,7 +365,7 @@ const Userhome = () => {
                                 <h6 className="heading-2">{key}</h6>
                                 <div className="p-2">
                                   {key === 'output' ?
-                                    <textarea rows={8} className="form-control custom-textarea">{value}</textarea>
+                                    <textarea rows={8} className="form-control custom-textarea w-100 pe-none">{value}</textarea>
                                     :
                                     <p>{key === 'predicted_class' ? value?.split("/").filter(Boolean).pop() : value}</p>
                                   }
@@ -390,11 +389,24 @@ const Userhome = () => {
 
                   {/* {
                     userState?.user_data?.phase === "B Phase Lower Direction" && */}
+
                   <ButtonComponent
-                    buttonName="Print Result"
+                    buttonName={
+                      userState?.getting_print_data_glow ?
+                        <>
+                          <span> Downloading </span>
+                          <SpinnerComponent spinner_width_height="1rem" />
+                        </>
+                        :
+                        "Print Result"
+                    }
                     className="btn-primary"
-                    clickFunction={() => setShowPrintModal(true)}
+                    clickFunction={() => {
+                      dispatch(handleGetPrintData({ model: userState?.user_data?.modal || '' }))
+                      setShowPrintModal(true)
+                    }}
                   />
+
                   {/* } */}
 
                   <PrintPage
@@ -403,10 +415,10 @@ const Userhome = () => {
                   />
 
                   <ButtonComponent
-                    buttonName="Done"
+                    buttonName={userState?.predicted_data?.length && userState?.user_data?.phase !== "B Phase Lower Direction" ? "Next" : "Done"}
                     className="btn-primary"
-                    clickFunction={() => dispatch(predicted_next_data())}
-                    btnDisable={userState?.predicted_data?.length <= 1}
+                    clickFunction={() => userState?.predicted_data?.length && userState?.user_data?.phase !== "B Phase Lower Direction" ? dispatch(predicted_next_data()) : null}
+                    btnDisable={!userState?.predicted_data?.length}
                   />
                 </Card.Footer>
               )}

@@ -1,17 +1,17 @@
 import axiosInstance from 'Services/axiosInstance';
 import {
-  start_predicting, correction_predicting
+  start_predicting, correction_predicting,
+  get_printing_data
 
 } from 'Views/User/Slice/User_slice';
 
 
 export const handle_start_predicting = params => async (dispatch) => {
   const fd = new FormData();
-  console.log(params)
   if (!params?.modal || !params?.phase || !params?.prediction_image?.length || !params?.excel_file?.length || !params?.upload_image?.length) dispatch(start_predicting({ type: 'failure', message: 'Please fill in all fileds' }))
 
   else {
-    fd.append("folder_name", params?.modal)
+    fd.append("model", params?.modal)
     fd.append("phase", params?.phase)
 
     for (let i = 0; i < params?.upload_image.length; i++) {
@@ -63,5 +63,22 @@ export const handle_correction_predicting = params => async (dispatch) => {
     } catch (Err) {
       dispatch(correction_predicting({ type: 'failure', message: Err?.message }))
     }
+  }
+}
+
+
+export const handleGetPrintData = params => async (dispatch) => {
+  if (params.model) {
+    try {
+      dispatch(get_printing_data({ type: 'request' }))
+      const { data } = await axiosInstance.post("/get_report_data", params)
+
+      if (data.error_code === 200) dispatch(get_printing_data({ type: 'response', data: data?.data?.prediction_report || [] }))
+      else dispatch(get_printing_data({ type: 'failure', message: data?.message || '' }))
+    } catch (Err) {
+      dispatch(get_printing_data({ type: 'failure', message: Err?.message || '' }))
+    }
+  } else {
+    dispatch(get_printing_data({ type: 'failure', message: 'Modal name required' }))
   }
 }

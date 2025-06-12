@@ -18,7 +18,7 @@ const userSlice = createSlice({
           case "modal":
             state.user_data.modal = value;
             state.user_data.folder_type = "Use Class"
-            state.user_data.phase = "R Phase Raise Direction"
+            state.user_data.phase = "R_Phase_Raise_Direction"
             break;
 
           case "phase":
@@ -63,10 +63,15 @@ const userSlice = createSlice({
       }
     },
     predicted_next_data(state) {
-      let currentIndex = state.phases.findIndex(phase => phase === state.user_data.phase);
-      state.user_data.modal = state.user_data.modal || '';
-      state.user_data.folder_type = 'Use Class'
-      state.user_data.phase = state.phases[currentIndex + 1] || state.user_data.phase;
+      let currentIndex = state.phases
+        .map((item) => item?.replaceAll(" ", "_"))
+        .findIndex(phase => phase === state.user_data.phase);
+
+      state.user_data = {
+        modal: state.user_data.modal || '',
+        folder_type: 'Use Class',
+        phase: state.phases[currentIndex + 1]?.replaceAll(" ", "_") || state.user_data.phase
+      };
       state.predicted_data = []
     },
     correction_predicting(state, action) {
@@ -89,6 +94,27 @@ const userSlice = createSlice({
         default:
           break;
       }
+    },
+    get_printing_data(state, action) {
+      const { type, data } = action.payload;
+
+      switch (type) {
+        case "request":
+          state.getting_print_data_glow = true
+          break;
+
+        case "response":
+          state.getting_print_data_glow = false
+          state.printing_data = data
+          break;
+
+        case "failure":
+          state.getting_print_data_glow = false
+          break;
+
+        default:
+          break;
+      }
     }
   },
   extraReducers: builder => {
@@ -99,7 +125,7 @@ const userSlice = createSlice({
 
           if (action?.payload?.type === "request") {
             state.user_data.folder_type = "Use Class";
-            state.user_data.phase = "R Phase Raise Direction";
+            state.user_data.phase = "R_Phase_Raise_Direction";
             state.predicted_data = [];
           }
         })
@@ -110,7 +136,7 @@ const { actions, reducer } = userSlice;
 
 export const {
   update_user_data, start_predicting, correction_predicting,
-  predicted_next_data
+  predicted_next_data, get_printing_data
 
 } = actions;
 

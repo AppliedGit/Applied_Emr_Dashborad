@@ -1,7 +1,6 @@
 import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import PrintableReport from './PrintableReport';
-import Images from "Utils/Image"
 
 function ReportModal({ show, onHide, indexData, Image }) {
 
@@ -12,13 +11,7 @@ function ReportModal({ show, onHide, indexData, Image }) {
     return (
         <>
             <Modal show={show} fullscreen onHide={onHide} centered>
-                <Modal.Header >
-                    <div className="w-100 d-flex justify-content-between align-items-center">
-                        <img src={Images?.CompanyLogo} alt="Logo" className="Emr-logo" style={{ maxHeight: '35px' }} />
-                        <img src={Images?.Easun} alt="Easun" className="Easun_mr" style={{ maxHeight: '50px' }} />
-                    </div>
-                </Modal.Header>
-                <Modal.Body id="modal-content">
+                <Modal.Body  id="modal-content" className='py-0'>
                     <div className="d-print-block scrollable scrollable" >
                         <PrintableReport indexData={indexData} Image={Image} />
                     </div>
@@ -34,6 +27,5 @@ function ReportModal({ show, onHide, indexData, Image }) {
 }
 
 export default ReportModal;
-
 
 

@@ -11,6 +11,9 @@ import CurrentGraph1 from "Assets/Images/CurrentGraph-1.png";
 import CurrentGraph2 from "Assets/Images/CurrentGraph-2.png";
 import CurrentGraph3 from "Assets/Images/CurrentGraph-3.png";
 import CurrentGraph4 from "Assets/Images/CurrentGraph-4.png";
+import Phaseimage1 from "Assets/Images/phase-image1.png";
+import Motor from "Assets/Images/motor.png";
+import Swtching from "Assets/Images/swtching.png"
 
 
 const Image = {
@@ -23,6 +26,7 @@ const Image = {
     DiverterSwitch,
     DCRMGraph,
     SwitchingSequence,CurrentGraph1 ,CurrentGraph2, CurrentGraph3,CurrentGraph4,
+    Phaseimage1,Motor,Swtching
     
 }
 

@@ -324,3 +324,110 @@ strong {
         display: block !important;
     }
 }
+
+
+/* print-style.css */
+
+@media print {
+    button {
+        display: none;
+    }
+
+    input {
+        visibility: hidden;
+    }
+
+    /* td::after {
+    content: attr(data-value);
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    font-size: 16px;
+    color: black;
+  } */
+}
+
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+
+.fullscreen-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #c9202a;
+}
+
+.fullscreen-table th,
+.fullscreen-table td {
+    border: 1px solid #c9202a;
+    padding: 12px;
+    text-align: left;
+    position: relative;
+}
+
+.fullscreen-table input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-size: 16px;
+}
+
+.fullscreen-table th {
+    font-family: 'Inter', 'Open Sans', 'Roboto', sans-serif;
+    font-size: 16px !important;
+    font-weight: 400;
+    color: #333;
+    padding: 7px 12px;
+    text-align: left;
+}
+
+
+@media print {
+  /* Add page break before every .page-break section */
+  .page-break {
+    page-break-before: always;
+    break-before: page;
+  }
+
+  /* Hide scrollbars, borders, modal controls etc. */
+  .modal, 
+  .modal-dialog,
+  .modal-content {
+    all: unset;
+  }
+
+  /* Ensure full-width printable content */
+  #modal-content {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+  }
+
+  /* Remove padding/margin from print sections */
+  .container, .row, .col, .table {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Inputs appear as plain text */
+  input {
+    border: none !important;
+    background: none !important;
+    pointer-events: none;
+  }
+
+  /* Optional: Display input value as text during print */
+  td[data-value]:before {
+    content: attr(data-value);
+    white-space: pre-wrap;
+  }
+
+  td input {
+    display: none;
+  }
+}
