@@ -68,17 +68,13 @@ export const handle_correction_predicting = params => async (dispatch) => {
 
 
 export const handleGetPrintData = params => async (dispatch) => {
-  if (params.model) {
-    try {
-      dispatch(get_printing_data({ type: 'request' }))
-      const { data } = await axiosInstance.post("/get_report_data", params)
+  try {
+    dispatch(get_printing_data({ type: 'request' }))
+    const { data } = await axiosInstance.post("/get_report_data", params)
 
-      if (data.error_code === 200) dispatch(get_printing_data({ type: 'response', data: data?.data?.prediction_report || [] }))
-      else dispatch(get_printing_data({ type: 'failure', message: data?.message || '' }))
-    } catch (Err) {
-      dispatch(get_printing_data({ type: 'failure', message: Err?.message || '' }))
-    }
-  } else {
-    dispatch(get_printing_data({ type: 'failure', message: 'Modal name required' }))
+    if (data.error_code === 200) dispatch(get_printing_data({ type: 'response', data: data?.data?.prediction_report || [] }))
+    else dispatch(get_printing_data({ type: 'failure', message: data?.message || '' }))
+  } catch (Err) {
+    dispatch(get_printing_data({ type: 'failure', message: Err?.message || '' }))
   }
 }

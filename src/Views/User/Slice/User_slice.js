@@ -98,6 +98,22 @@ const userSlice = createSlice({
     get_printing_data(state, action) {
       const { type, data } = action.payload;
 
+      let printing_data = data?.map(item => {
+        
+        let converted_graph_data = item?.graph_data?.map(obj => {
+          const [key, value] = Object.entries(obj)[0];
+          return { x: key, y: value };
+        }) || []
+
+        return {
+          ...item,
+          graph_data: converted_graph_data
+          }
+      });
+
+
+      console.log(printing_data)
+
       switch (type) {
         case "request":
           state.getting_print_data_glow = true
@@ -105,7 +121,7 @@ const userSlice = createSlice({
 
         case "response":
           state.getting_print_data_glow = false
-          state.printing_data = data
+          state.printing_data = printing_data
           break;
 
         case "failure":

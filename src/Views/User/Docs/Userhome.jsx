@@ -4,7 +4,7 @@ import { Card, Form, Modal } from 'react-bootstrap';
 import { FaRegFile } from 'react-icons/fa';
 import useCommonState from 'ResuableFunctions/CustomHooks';
 import { handle_get_dir } from 'Views/Admin/Action/AdminAction';
-import { predicted_next_data, update_user_data } from '../Slice/User_slice';
+import { get_printing_data, predicted_next_data, update_user_data } from '../Slice/User_slice';
 import ShortUniqueId from 'short-unique-id';
 import ButtonComponent from 'Components/Button/Button';
 import SpinnerComponent from 'Components/Spinner/Spinner';
@@ -219,6 +219,15 @@ const Userhome = () => {
     dispatch(handle_correction_predicting({ class_name, send_image }))
   }
 
+  function handleprint() {
+    if (userState?.user_data?.modal) {
+      dispatch(handleGetPrintData({ model: userState?.user_data?.modal || '' }));
+      setShowPrintModal(true);
+    } else {
+      dispatch(get_printing_data({ type: 'failure', message: 'Model name required' }))
+    }
+  }
+
   return (
     <div className="container pt-4">
       <div className="w-100 mb-3 ps-2">
@@ -387,31 +396,19 @@ const Userhome = () => {
                     clickFunction={() => dispatch(update_user_data({ correct_prediction_modal: true, folder_type: "Use Class" }))}
                   />
 
-                  {/* {
-                    userState?.user_data?.phase === "B Phase Lower Direction" && */}
-
-                  <ButtonComponent
-                    buttonName={
-                      userState?.getting_print_data_glow ?
-                        <>
-                          <span> Downloading </span>
-                          <SpinnerComponent spinner_width_height="1rem" />
-                        </>
-                        :
-                        "Print Result"
-                    }
-                    className="btn-primary"
-                    clickFunction={() => {
-                      dispatch(handleGetPrintData({ model: userState?.user_data?.modal || '' }))
-                      setShowPrintModal(true)
-                    }}
-                  />
-
-                  {/* } */}
+                  {
+                    userState?.user_data?.phase === "B_Phase_Lower_Direction" && userState?.predicted_data?.length &&
+                    <ButtonComponent
+                      buttonName="Print Result"
+                      className="btn-primary"
+                      clickFunction={handleprint}
+                    />
+                  }
 
                   <PrintPage
                     show={showPrintModal}
                     onHide={() => setShowPrintModal(false)}
+                    userState={userState}
                   />
 
                   <ButtonComponent

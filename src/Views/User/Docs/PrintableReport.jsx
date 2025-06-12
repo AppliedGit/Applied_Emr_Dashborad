@@ -5,68 +5,7 @@ import PrintableTransformerTable from './PrintableTransformerTable';
 import PrintableOltcTable from './PrintableOltcTable';
 import PrintableEngineerDetails from './PrintableEngineerDetails';
 import Chart from './Chart';
-
-
-
-
-const phaseData = [
-    {
-        phase: "R PhaseB Phase Lower Direction- Raise Direction",
-        phase_image: "path/to/phase_image1.png",
-        analysis: "This phase involves raising the R phase in the specified direction.",
-        motor_current_profile_image: "path/to/motor_current_profile.jpg",
-        motor_current_profile_analysis: "The motor current profile shows the current flow during the R phase raise operation.",
-        switching_time_image: "path/to/switching_time.jpg",
-        switching_time_analysis: "The switching time indicates the duration taken to switch the R phase to the raised position.",
-    },
-    {
-        phase: "R Phase – Lower Direction",
-        phase_image: "path/to/phase_image1.png",
-        analysis: "This phase involves raising the R phase in the specified direction.",
-        motor_current_profile_image: "path/to/motor_current_profile.jpg",
-        motor_current_profile_analysis: "The motor current profile shows the current flow during the R phase raise operation.",
-        switching_time_image: "path/to/switching_time.jpg",
-        switching_time_analysis: "The switching time indicates the duration taken to switch the R phase to the raised position.",
-    },
-    {
-        phase: "Y Phase – Raise Direction",
-        phase_image: "path/to/phase_image1.png",
-        analysis: "This phase involves raising the R phase in the specified direction.",
-        motor_current_profile_image: "path/to/motor_current_profile.jpg",
-        motor_current_profile_analysis: "The motor current profile shows the current flow during the R phase raise operation.",
-        switching_time_image: "path/to/switching_time.jpg",
-        switching_time_analysis: "The switching time indicates the duration taken to switch the R phase to the raised position.",
-    },
-    {
-        phase: "Y Phase - Lower Direction",
-        phase_image: "path/to/phase_image1.png",
-        analysis: "This phase involves raising the R phase in the specified direction.",
-        motor_current_profile_image: "path/to/motor_current_profile.jpg",
-        motor_current_profile_analysis: "The motor current profile shows the current flow during the R phase raise operation.",
-        switching_time_image: "path/to/switching_time.jpg",
-        switching_time_analysis: "The switching time indicates the duration taken to switch the R phase to the raised position.",
-    },
-    {
-        phase: "B Phase - Raise Direction",
-        phase_image: "path/to/phase_image1.png",
-        analysis: "This phase involves raising the R phase in the specified direction.",
-        motor_current_profile_image: "path/to/motor_current_profile.jpg",
-        motor_current_profile_analysis: "The motor current profile shows the current flow during the R phase raise operation.",
-        switching_time_image: "path/to/switching_time.jpg",
-        switching_time_analysis: "The switching time indicates the duration taken to switch the R phase to the raised position.",
-    },
-    {
-        phase: "B Phase - Lower Direction",
-        phase_image: "path/to/phase_image1.png",
-        analysis: "This phase involves raising the R phase in the specified direction.",
-        motor_current_profile_image: "path/to/motor_current_profile.jpg",
-        motor_current_profile_analysis: "The motor current profile shows the current flow during the R phase raise operation.",
-        switching_time_image: "path/to/switching_time.jpg",
-        switching_time_analysis: "The switching time indicates the duration taken to switch the R phase to the raised position.",
-    },
-
-];
-
+import useCommonState from 'ResuableFunctions/CustomHooks';
 
 const PrintableReport = forwardRef(
     (
@@ -80,6 +19,10 @@ const PrintableReport = forwardRef(
         },
         ref
     ) => {
+
+        const { userState } = useCommonState();
+
+
         return (
             <div ref={ref} className="a4-print-page p-4 pt-0">
                 <div className="w-100 d-flex justify-content-between align-items-center position-sticky top-0 bg-white py-4 print_page_header">
@@ -91,7 +34,7 @@ const PrintableReport = forwardRef(
                 </div>
 
                 <div className="container mt-4">
-                  <PrintableTable/>
+                    <PrintableTable />
                 </div>
 
                 <div className="container mt-5 my-4">
@@ -117,11 +60,11 @@ const PrintableReport = forwardRef(
                 </div>
 
                 <div className="page-break container mt-5">
-                    <PrintableTransformerTable/>
+                    <PrintableTransformerTable />
                 </div>
 
                 <div className="page-break container mt-5">
-                    <PrintableOltcTable/>
+                    <PrintableOltcTable />
                 </div>
 
                 <div className="container mt-4 py-4">
@@ -215,22 +158,27 @@ const PrintableReport = forwardRef(
                 <div className="container page-break mt-5">
                     <h3 className="text-center heading-1 mb-4 text-danger">Phase Analysis</h3>
 
-                    {phaseData.map((phase, idx) => (
+                    {userState?.printing_data?.map((phase, idx) => (
                         <div key={idx} className="mb-5 page-break">
                             <h4 className="heading-1 text-center text-primary">{phase.phase}</h4>
                             <div className="text-center my-3">
-                                <img src={Image.Phaseimage1} alt={`${phase.phase}`} className="img-fluid" />
+                                <img src={phase?.phase_image} alt={`${phase?.phase}`} className="img-fluid" />
                             </div>
-                            <p className="text-justify">{phase.analysis}</p>
+                            <h6>Analysis</h6>
+                            <p className="text-justify">{phase?.result[0]?.predicted_class?.split("/")[phase?.result[0]?.predicted_class?.split("/")?.length - 2]}</p>
+
                             <h5 className="mt-4 heading-1 text-danger">Motor Current Profile</h5>
                             <div className="text-center my-3">
-                                <img src={Image.Motor} alt="Motor Current Profile" className="img-fluid" />
+                                <img src={phase?.upload_image} alt="Motor Current Profile" className="img-fluid" />
                             </div>
-                            <p className="text-justify">{phase.motor_current_profile_analysis}</p>
+                            <h6>Analysis</h6>
+                            <p className="text-justify">{phase?.result[0]?.predicted_class?.split("/")[phase?.result[0]?.predicted_class?.split("/")?.length - 2]}</p>
+
                             <h5 className="mt-4 heading-1 text-danger">Switching Time</h5>
                             <div className="text-center my-3">
-                                <Chart/>
+                                <Chart phase={phase?.graph_data}/>
                             </div>
+                            <h6>Analysis</h6>
                             <p className="text-justify">{phase.switching_time_analysis}</p>
                         </div>
                     ))}
@@ -251,7 +199,7 @@ const PrintableReport = forwardRef(
                 </div>
 
                 <div className="container mt-4">
-                 <PrintableEngineerDetails/>
+                    <PrintableEngineerDetails />
                 </div>
 
             </div >
