@@ -191,6 +191,41 @@ const adminSlice = createSlice({
                     break;
             }
         },
+        // train_model_progress(state, action) {
+        //     const { type, data } = action.payload;
+
+        //     switch (type) {
+        //         case "request":
+        //             if (data?.show === "training_status") {
+        //                 state.train_path = data?.path
+        //                 state.traing_command_prompt = []
+        //                 state.training_percentage = 0
+        //                 state.is_streaming = true
+        //             }
+        //             if (data?.show !== "training_status") state.traing_command_prompt = [...state.traing_command_prompt, data]
+        //             break;
+
+        //         case "response":
+        //             state.traing_command_prompt = [...state.traing_command_prompt, data]
+        //             state.is_streaming = true
+        //             if (data?.epoch) state.training_percentage = data?.epoch;
+        //             if (data?.epoch === 100) {
+        //                 let update_dir = state.dir_data?.map(item =>
+        //                     item.name === state.train_path ? { ...item, status: "trained" } : item
+        //                 )
+
+        //                 state.dir_data = update_dir
+        //                 state.is_streaming = false
+        //             }
+        //             break;
+
+        //         case "failure":
+        //             state.is_streaming = false
+
+        //         default:
+        //             break;
+        //     }
+        // },
         train_model_progress(state, action) {
             const { type, data } = action.payload;
 
@@ -205,11 +240,16 @@ const adminSlice = createSlice({
                     if (data?.show !== "training_status") state.traing_command_prompt = [...state.traing_command_prompt, data]
                     break;
 
-                case "response":
-                    state.traing_command_prompt = [...state.traing_command_prompt, data]
+                case "response": 
+                    const updatedPrompt = [...state.traing_command_prompt]
+                        .filter((item) => item?.epoch !== data?.epoch || item?.message !== data?.message);
+
+                    updatedPrompt.push(data);
+                    state.traing_command_prompt = updatedPrompt;
+
                     state.is_streaming = true
                     if (data?.epoch) state.training_percentage = data?.epoch;
-                    if (data?.epoch === 100) {
+                    if (data?.message === "Training completed") {
                         let update_dir = state.dir_data?.map(item =>
                             item.name === state.train_path ? { ...item, status: "trained" } : item
                         )

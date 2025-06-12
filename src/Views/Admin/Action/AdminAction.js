@@ -46,68 +46,97 @@ export const handle_train_modal = params => async (dispatch) => {
     }
 }
 
+// export const handle_train_model_progress = (params) => async (dispatch) => {
+//     if (params?.path) {
+//         try {
+//             dispatch(train_model_progress({ type: "request", data: params }));
+
+//             //is_streaming is used to check if the stream is already running
+//             if (params?.is_streaming) return
+
+//             const response = await fetch(`${import.meta.env.VITE_API_URL}/train_model_progress`, {
+//                 method: 'GET',
+//                 headers: {
+//                     'Accept': 'text/event-stream',
+//                 }
+//             });
+
+//             if (!response.ok) throw new Error('Network response was not ok');
+
+//             const reader = response.body.getReader();
+//             const decoder = new TextDecoder('utf-8');
+//             let buffer = '';
+
+//             while (true) {
+//                 const { done, value } = await reader.read();
+//                 if (done) {
+//                     dispatch(train_model_progress({ type: "response", data: { message: 'Stream ended.' } }));
+//                     break;
+//                 }
+
+//                 buffer += decoder.decode(value, { stream: true });
+
+//                 let lines = buffer.split('\n\n');
+//                 buffer = lines.pop();
+
+//                 for (const line of lines) {
+//                     const trimmedLine = line.trim();
+
+//                     if (trimmedLine.startsWith('data: ')) {
+//                         let jsonStr = trimmedLine.slice(6);
+
+//                         if (jsonStr.startsWith("{") && jsonStr.endsWith("}")) {
+//                             jsonStr = jsonStr.replace(/'/g, '"');
+
+//                             try {
+//                                 const data = JSON.parse(jsonStr);
+//                                 dispatch(train_model_progress({ type: "response", data: data }));
+//                             } catch (err) {
+//                                 console.error('Failed to parse JSON chunk:', jsonStr, err);
+//                                 dispatch(train_model_progress({ type: "failure", message: err }));
+//                             }
+//                         } else {
+//                             console.error('Invalid JSON format detected:', jsonStr);
+//                         }
+//                     }
+//                 }
+//             }
+
+//         } catch (err) {
+//             console.error('Stream fetch error:', err);
+//             dispatch(train_model_progress({ type: "failure", message: err?.message }));
+//         }
+//     } else {
+//         dispatch(train_model_progress({ type: "failure", message: 'Base path required' }));
+//     }
+// }
+
 export const handle_train_model_progress = (params) => async (dispatch) => {
     if (params?.path) {
         try {
-            dispatch(train_model_progress({ type: "request", data: params }));
+            if (!params?.retry) dispatch(train_model_progress({ type: "request", data: params }))
 
-            //is_streaming is used to check if the stream is already running
-            if (params?.is_streaming) return
-
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/train_model_progress`, {
-                method: 'GET',
-                headers: {
-                    'Accept': 'text/event-stream',
-                }
-            });
-
-            if (!response.ok) throw new Error('Network response was not ok');
-
-            const reader = response.body.getReader();
-            const decoder = new TextDecoder('utf-8');
-            let buffer = '';
-
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) {
-                    dispatch(train_model_progress({ type: "response", data: { message: 'Stream ended.' } }));
-                    break;
+            const { data } = await axiosInstance.get("/train_model_status")
+            if ([-1, 1, 2]?.includes(data?.error_code)) {
+                if ([-1, 1]?.includes(data?.error_code)) {
+                    setTimeout(() => {
+                        let newParams = { ...params }
+                        delete newParams.retry
+                        newParams.retry = true
+                        dispatch(handle_train_model_progress(newParams))
+                    }, 2000);
                 }
 
-                buffer += decoder.decode(value, { stream: true });
-
-                let lines = buffer.split('\n\n');
-                buffer = lines.pop();
-
-                for (const line of lines) {
-                    const trimmedLine = line.trim();
-
-                    if (trimmedLine.startsWith('data: ')) {
-                        let jsonStr = trimmedLine.slice(6);
-
-                        if (jsonStr.startsWith("{") && jsonStr.endsWith("}")) {
-                            jsonStr = jsonStr.replace(/'/g, '"');
-
-                            try {
-                                const data = JSON.parse(jsonStr);
-                                dispatch(train_model_progress({ type: "response", data: data }));
-                            } catch (err) {
-                                console.error('Failed to parse JSON chunk:', jsonStr, err);
-                                dispatch(train_model_progress({ type: "failure", message: err }));
-                            }
-                        } else {
-                            console.error('Invalid JSON format detected:', jsonStr);
-                        }
-                    }
-                }
+                dispatch(train_model_progress({ type: "response", data: data?.data }))
             }
-
-        } catch (err) {
-            console.error('Stream fetch error:', err);
-            dispatch(train_model_progress({ type: "failure", message: err?.message }));
+            else {
+                dispatch(train_model_progress({ type: "failure", message: data?.message }))
+            }
+        } catch (Err) {
+            dispatch(train_model_progress({ type: "failure", message: Err?.message }))
         }
     } else {
-        dispatch(train_model_progress({ type: "failure", message: 'Base path required' }));
+        dispatch(train_model_progress({ type: "failure", message: 'Base path required' }))
     }
 }
 
