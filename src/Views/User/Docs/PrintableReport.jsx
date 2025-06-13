@@ -43,7 +43,7 @@ const PrintableReport = forwardRef(
                         <h4 className="text-center heading-1">INDEX</h4>
                         <table className="table table-bordered text-center align-middle ">
                             <thead>
-                                <tr className="custom-header">
+                                <tr className="custom-header  ">
                                     <th><span>SL.NO</span></th>
                                     <th><span>TITLE</span></th>
                                     <th><span>PAGE NO.</span></th>

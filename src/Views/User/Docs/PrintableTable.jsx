@@ -41,25 +41,25 @@ const PrintableTable = () => {
                     <tr>
                         <th>Customer Name <span className='text-danger'>*</span></th>
                         <td data-value="">
-                            <input type="text" placeholder="Enter customer name" defaultValue="" />
+                            <input type="text" placeholder="Enter customer name" className='form-control' defaultValue="" />
                         </td>
                     </tr>
                     <tr>
                         <th>Address <span className='text-danger'>*</span></th>
                         <td data-value="">
-                            <input type="text" placeholder="Enter address" defaultValue="" />
+                            <input type="text" placeholder="Enter address"className='form-control' defaultValue="" />
                         </td>
                     </tr>
                     <tr>
                         <th>Work Order Number <span className='text-danger'>*</span></th>
                         <td data-value="">
-                            <input type="text" placeholder="Enter work order" defaultValue="" />
+                            <input type="text" placeholder="Enter work order"className='form-control' defaultValue="" />
                         </td>
                     </tr>
                     <tr>
                         <th>Date of Test <span className='text-danger'>*</span></th>
                         <td data-value="">
-                            <input type="date" defaultValue="" />
+                            <input type="date" className='form-control'defaultValue="" />
                         </td>
                     </tr>
                 </tbody>

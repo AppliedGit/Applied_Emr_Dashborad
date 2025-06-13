@@ -41,13 +41,13 @@ const PrintableTransformerTable = () => {
                     <tbody>
                         {transformerFields.map(({ label, placeholder, type = 'text' }, index) => (
                             <tr key={index}>
-                                <th style={{ width: '30%' }}>
+                                <th style={{ width: '30%',fontWeight:"400" }}>
                                     {label} <span className="text-danger">*</span>
                                 </th>
                                 <td data-value="">
                                     <input
                                         type={type}
-                                        className="form-control"
+                                        className="form-control  border-0"
                                         placeholder={placeholder}
                                         defaultValue=""
                                     />

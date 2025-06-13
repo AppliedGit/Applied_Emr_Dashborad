@@ -335,15 +335,6 @@ strong {
     input {
         visibility: hidden;
     }
-
-    /* td::after {
-    content: attr(data-value);
-    position: absolute;
-    top: 12px;
-    left: 12px;
-    font-size: 16px;
-    color: black;
-  } */
 }
 
 
@@ -448,11 +439,24 @@ body {
 }
 
 @media print {
-  .print-center-page {
-    height: 170mm !important; 
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    page-break-after: always;
-  }
+    .print-center-page {
+        height: 170mm !important;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        page-break-after: always;
+    }
+}
+
+@media print {
+    input {
+        display: none !important;
+    }
+
+    td[data-value]::before {
+        content: attr(data-value);
+        display: block;
+        white-space: pre-wrap;
+        min-height: 1.5em;
+    }
 }

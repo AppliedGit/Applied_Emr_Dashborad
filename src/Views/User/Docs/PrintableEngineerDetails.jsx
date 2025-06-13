@@ -3,7 +3,7 @@ import React from 'react';
 const PrintableEngineerDetails = () => {
     const engineerFields = [
         { label: 'TEST ENGINEER NAME', name: 'testEngineer' },
-        { label: 'REPORT PREPARED AND ANALYSED BY', name: 'reportAnalyst' },
+        { label: 'REPORT PREPARED AND ANALYSED BY', name: 'reportAnalyst'},
     ];
 
     return (
@@ -13,14 +13,14 @@ const PrintableEngineerDetails = () => {
                 <tbody>
                     {engineerFields.map(({ label, name }, index) => (
                         <tr key={index}>
-                            <th style={{ width: '30%' }}>
+                            <th style={{ width: '30%',fontWeight:"400" }}>
                                 {label} <span className="text-danger">*</span>
                             </th>
                             <td data-value="">
                                 <input
                                     type="text"
                                     name={name}
-                                    className="form-control"
+                                    className="form-control  border-0 "
                                     required
                                 />
                             </td>
@@ -33,3 +33,4 @@ const PrintableEngineerDetails = () => {
 };
 
 export default PrintableEngineerDetails;
+
