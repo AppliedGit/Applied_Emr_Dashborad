@@ -10,7 +10,7 @@ export const handle_get_dir = params => async (dispatch) => {
     try {
         dispatch(get_dir({ type: "request" }))
 
-        const { data } = await axiosInstance.post("/list_dir_new", { folder_path: params || "" })
+        const { data } = await axiosInstance.post("/list_dir", { folder_path: params || "" })
 
         if (data?.error_code === 200) {
             dispatch(get_dir({ type: "response", data: data?.data }))
