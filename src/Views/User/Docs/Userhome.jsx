@@ -394,14 +394,16 @@ const Userhome = () => {
                     clickFunction={() => dispatch(update_user_data({ correct_prediction_modal: true, folder_type: "Use Class" }))}
                   />
 
-                  {/* {
-                    userState?.user_data?.phase === "B_Phase_Lower_Direction" && userState?.predicted_data?.length && */}
-                  <ButtonComponent
-                    buttonName="Print Result"
-                    className="btn-primary"
-                    clickFunction={handleprint}
-                  />
-                  {/* } */}
+                  {
+                    userState?.user_data?.phase === "B_Phase_Lower_Direction" && userState?.predicted_data?.length ?
+                      <ButtonComponent
+                        buttonName="Print Result"
+                        className="btn-primary"
+                        clickFunction={handleprint}
+                      />
+                      :
+                      null
+                  }
 
                   <PrintPage
                     show={showPrintModal}
@@ -410,9 +412,9 @@ const Userhome = () => {
                   />
 
                   <ButtonComponent
-                    buttonName={userState?.predicted_data?.length && userState?.user_data?.phase !== "B Phase Lower Direction" ? "Next" : "Done"}
+                    buttonName={userState?.predicted_data?.length && userState?.user_data?.phase !== "B_Phase_Lower_Direction" ? "Next" : "Done"}
                     className="btn-primary"
-                    clickFunction={() => userState?.predicted_data?.length && userState?.user_data?.phase !== "B Phase Lower Direction" ? dispatch(predicted_next_data()) : null}
+                    clickFunction={() => dispatch(predicted_next_data(userState?.user_data?.phase === "B_Phase_Lower_Direction" && userState?.predicted_data?.length ? { clear_all_data: true } : {}))}
                     btnDisable={!userState?.predicted_data?.length}
                   />
                 </Card.Footer>

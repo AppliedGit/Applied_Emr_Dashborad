@@ -65,17 +65,28 @@ const userSlice = createSlice({
       }
     },
 
-    predicted_next_data(state) {
-      let currentIndex = state.phases
-        .map((item) => item?.replaceAll(" ", "_"))
-        .findIndex(phase => phase === state.user_data.phase);
+    predicted_next_data(state, action) {
+      const { clear_all_data } = action.payload;
 
-      state.user_data = {
-        modal: state.user_data.modal || '',
-        folder_type: 'Use Class',
-        phase: state.phases[currentIndex + 1]?.replaceAll(" ", "_") || state.user_data.phase
-      };
-      state.predicted_data = []
+      if (clear_all_data) {
+        state.user_data = {};
+        state.user_data.folder_type = "Use Class";
+        state.user_data.phase = "R_Phase_Raise_Direction";
+        state.predicted_data = [];
+        state.predicted_data = [];
+      }
+      else {
+        let currentIndex = state.phases
+          .map((item) => item?.replaceAll(" ", "_"))
+          .findIndex(phase => phase === state.user_data.phase);
+
+        state.user_data = {
+          modal: state.user_data.modal || '',
+          folder_type: 'Use Class',
+          phase: state.phases[currentIndex + 1]?.replaceAll(" ", "_") || state.user_data.phase
+        };
+        state.predicted_data = []
+      }
     },
 
     correction_predicting(state, action) {
