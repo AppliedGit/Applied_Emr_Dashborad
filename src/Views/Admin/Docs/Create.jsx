@@ -14,13 +14,15 @@ const Create = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(handle_get_dir())
-  }, [])
+    if (adminState?.dir_glow) {
+      dispatch(handle_get_dir())
+    }
+  }, [adminState?.dir_glow])
 
   const handleDelete = (indexToRemove) => {
     const updated = [...adminState.create_image_modal.images];
     updated.splice(indexToRemove, 1);
-    dispatch(update_create_image_modal({ images: updated }));
+    dispatch(update_create_image_modal({ delete_images: updated }));
   };
 
   const handleCheck = () => {

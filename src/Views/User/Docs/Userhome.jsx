@@ -38,8 +38,10 @@ const Userhome = () => {
   }
 
   useEffect(() => {
-    dispatch(handle_get_dir())
-  }, [])
+    if (adminState?.dir_glow) {
+      dispatch(handle_get_dir())
+    }
+  }, [adminState?.dir_glow])
 
   function upload_image(e, type) {
     const selectedFiles = Array.from(e.target.files);
@@ -210,11 +212,7 @@ const Userhome = () => {
 
   function handleCorrectPrediction() {
     let class_name = `${userState?.user_data?.modal}/train/${userState?.user_data?.selected_folder}`
-
-    const send_image = Array.from(userState?.user_data?.images || [])?.find((img) => {
-      const imgFilename = img?.name;
-      return normalize(imgFilename) === normalize(userState?.predicted_data[0]?.filename || '');
-    });
+    const send_image = Array.from(userState?.user_data?.prediction_image || [])
 
     dispatch(handle_correction_predicting({ class_name, send_image }))
   }
@@ -398,11 +396,11 @@ const Userhome = () => {
 
                   {/* {
                     userState?.user_data?.phase === "B_Phase_Lower_Direction" && userState?.predicted_data?.length && */}
-                    <ButtonComponent
-                      buttonName="Print Result"
-                      className="btn-primary"
-                      clickFunction={handleprint}
-                    />
+                  <ButtonComponent
+                    buttonName="Print Result"
+                    className="btn-primary"
+                    clickFunction={handleprint}
+                  />
                   {/* } */}
 
                   <PrintPage

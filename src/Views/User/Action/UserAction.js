@@ -49,7 +49,9 @@ export const handle_correction_predicting = params => async (dispatch) => {
   else {
     fd.append("class_name", params?.class_name)
     fd.append("user_response", 'no')
-    fd.append('images', params?.send_image);
+    for (let i = 0; i < params?.send_image.length; i++) {
+      fd.append('images', params?.send_image[i]);
+  }
 
     try {
       dispatch(correction_predicting({ type: 'request' }))

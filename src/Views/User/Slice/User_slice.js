@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { get_dir } from 'Views/Admin/Slice/Admin_slice';
+import { loginResponse } from 'Views/Common/Slice/Common_slice';
 
 const userSlice = createSlice({
   name: 'user slice',
@@ -39,6 +40,7 @@ const userSlice = createSlice({
         }
       })
     },
+
     start_predicting(state, action) {
       const { type, data } = action.payload;
 
@@ -62,6 +64,7 @@ const userSlice = createSlice({
           break;
       }
     },
+
     predicted_next_data(state) {
       let currentIndex = state.phases
         .map((item) => item?.replaceAll(" ", "_"))
@@ -74,6 +77,7 @@ const userSlice = createSlice({
       };
       state.predicted_data = []
     },
+
     correction_predicting(state, action) {
       const { type, data } = action.payload;
 
@@ -85,6 +89,10 @@ const userSlice = createSlice({
         case "response":
           state.correction_predicting_glow = false
           state.user_data.correct_prediction_modal = false
+          state.user_data = {};
+          state.user_data.folder_type = "Use Class";
+          state.user_data.phase = "R_Phase_Raise_Direction";
+          state.predicted_data = [];
           break;
 
         case "failure":
@@ -95,11 +103,11 @@ const userSlice = createSlice({
           break;
       }
     },
+
     get_printing_data(state, action) {
       const { type, data } = action.payload;
-
       let printing_data = data?.map(item => {
-        
+
         let converted_graph_data = item?.graph_data?.map(obj => {
           const [key, value] = Object.entries(obj)[0];
           return { x: key, y: value };
@@ -108,11 +116,8 @@ const userSlice = createSlice({
         return {
           ...item,
           graph_data: converted_graph_data
-          }
+        }
       });
-
-
-      console.log(printing_data)
 
       switch (type) {
         case "request":
@@ -135,6 +140,13 @@ const userSlice = createSlice({
   },
   extraReducers: builder => {
     builder
+      .addCase(loginResponse, (state, action) => {
+        state.user_data = {};
+        state.user_data.folder_type = "Use Class";
+        state.user_data.phase = "R_Phase_Raise_Direction";
+        state.predicted_data = [];
+      })
+
       .addMatcher(
         (action) => [get_dir.toString()].includes(action.type),
         (state, action) => {

@@ -1,9 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { loginResponse } from "Views/Common/Slice/Common_slice";
+import { correction_predicting } from "Views/User/Slice/User_slice";
 
 const adminSlice = createSlice({
     name: "admin_slice",
     initialState: {
-        dir_glow: false,
+        dir_glow: true,
         is_streaming: false,
         traing_command_prompt: [],
         training_percentage: 0,
@@ -84,6 +86,36 @@ const adminSlice = createSlice({
                         break;
                     }
 
+                    case "images": {
+                        // 🔹 1. Normalise the incoming data (could be FileList or array)
+                        const incomingFiles = Array.isArray(value) ? value : Array.from(value);
+
+                        // 🔹 2. Start with a *plain array* of existing files
+                        const currentEntry = state.create_image_modal[key];
+                        const currentArr =
+                            currentEntry && currentEntry instanceof FileList
+                                ? Array.from(currentEntry)     // FileList → array
+                                : Array.isArray(currentEntry)
+                                    ? currentEntry                // already array
+                                    : [];                         // first time
+
+                        // 🔹 3. Append the new files
+                        currentArr.push(...incomingFiles);
+
+                        // 🔹 4. Turn the array back into a fresh FileList
+                        const dt = new DataTransfer();
+                        currentArr.forEach((file) => dt.items.add(file));
+
+                        // 🔹 5. Store the *new* FileList in state
+                        state.create_image_modal[key] = dt.files;          // <-- real FileList
+                        break;
+                    }
+
+                    case "delete_images":
+                        state.create_image_modal.images = value;
+                        break;
+
+
                     default:
                         state.create_image_modal[key] = value;
                         break;
@@ -100,6 +132,7 @@ const adminSlice = createSlice({
 
                 case "response":
                     state.create_update_modal_spinner = false
+                    state.dir_glow = true
                     state.create_image_modal = { modal_type: 'Update model', endpoint: "/upload_image" }
                     break;
 
@@ -240,7 +273,7 @@ const adminSlice = createSlice({
                     if (data?.show !== "training_status") state.traing_command_prompt = [...state.traing_command_prompt, data]
                     break;
 
-                case "response": 
+                case "response":
                     const updatedPrompt = [...state.traing_command_prompt]
                         .filter((item) => item?.epoch !== data?.epoch || item?.message !== data?.message);
 
@@ -266,6 +299,18 @@ const adminSlice = createSlice({
                     break;
             }
         }
+    },
+    extraReducers: (builder) => {
+        builder
+            .addCase(loginResponse, (state, action) => {
+                state.dir_glow = true;
+            })
+
+            .addCase(correction_predicting, (state, action) => {
+                if (action?.payload?.type === "response") {
+                    state.dir_glow = true;
+                }
+            })
     }
 })
 

@@ -383,7 +383,7 @@ const commonSlice = createSlice({
                 },
 
                 (state, action) => {
-                    // if (action?.payload?.type === "response") setSuccessState(state, action);
+                    if (action?.payload?.type === "response") setSuccessState(state, action);
                     if (action?.payload?.type === "failure") setErrorState(state, action);
                 }
             )
