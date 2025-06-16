@@ -13,8 +13,10 @@ const Home = () => {
   const navigate = useCustomNavigate()
 
   useEffect(() => {
-    dispatch(handle_get_dir())
-  }, [])
+    if (adminState?.dir_glow) {
+      dispatch(handle_get_dir())
+    }
+  }, [adminState?.dir_glow])
 
   return (
     <div className="container mt-2">
