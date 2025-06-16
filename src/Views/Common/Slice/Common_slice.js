@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import Cookies from 'js-cookie'
 import { decryptData, encryptData } from "Security/Crypto/Crypto";
 import { create_update_modal, delete_modal, deletion_data, get_dir, train_modal, train_modal_path, train_model_progress } from "Views/Admin/Slice/Admin_slice";
-import { correction_predicting, start_predicting } from "Views/User/Slice/User_slice";
+import { correction_predicting, get_printing_data, start_predicting } from "Views/User/Slice/User_slice";
 
 const commonSlice = createSlice({
     name: 'commonSlice',
@@ -388,7 +388,8 @@ const commonSlice = createSlice({
                         train_modal.toString(),
                         create_update_modal.toString(),
                         start_predicting.toString(),
-                        correction_predicting.toString()
+                        correction_predicting.toString(),
+                        get_printing_data.toString()
                     ].includes(action.type)
                 },
 

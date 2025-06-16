@@ -249,3 +249,214 @@ body {
 
 
 /* userpage */
+.Emr-logo {
+    max-height: 40px;
+}
+
+.Easun_mr {
+    width: 14rem !important;
+    height: 62px !important;
+    aspect-ratio: 97/28 !important;
+}
+
+
+
+
+@media (max-width: 768px) {
+    .navbar-brand span {
+        font-size: 1rem;
+    }
+}
+
+
+/* table */
+.custom-header th {
+    background-color: #c9202a !important;
+    color: white !important;
+
+}
+
+
+.container-8 {
+    max-width: 800px;
+    margin: auto;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+
+}
+
+strong {
+    color: #003366;
+}
+
+.img-fluid {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+.full-width-text {
+    width: 100%;
+    text-align: justify;
+}
+
+
+.image-box {
+    max-width: 600px;
+    margin: 0 auto;
+    border: 2px solid #ccc;
+    background-color: #f9f9f9;
+}
+
+.a4-print-page {
+    overflow: hidden !important;
+    page-break-inside: avoid !important;
+}
+
+
+@media print {
+    .no-print {
+        display: none !important;
+    }
+
+    .d-print-block {
+        display: block !important;
+    }
+}
+
+
+/* print-style.css */
+
+@media print {
+    button {
+        display: none;
+    }
+
+    input {
+        visibility: hidden;
+    }
+}
+
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+
+.fullscreen-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #c9202a;
+}
+
+.fullscreen-table th,
+.fullscreen-table td {
+    border: 1px solid #c9202a;
+    padding: 12px;
+    text-align: left;
+    position: relative;
+}
+
+.fullscreen-table input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-size: 16px;
+}
+
+.fullscreen-table th {
+    font-family: 'Inter', 'Open Sans', 'Roboto', sans-serif;
+    font-size: 16px !important;
+    font-weight: 400;
+    color: #333;
+    padding: 7px 12px;
+    text-align: left;
+}
+
+
+@media print {
+
+    .page-break {
+        page-break-before: always;
+        break-before: page;
+        display: block;
+    }
+
+    .phase-block {
+        display: block !important;
+        page-break-inside: avoid;
+    }
+
+    .modal,
+    .modal-dialog,
+    .modal-content {
+        all: unset;
+    }
+
+    #modal-content {
+        width: 100%;
+        padding: 0;
+        margin: 0;
+    }
+
+    .container,
+    .row,
+    .col,
+    .table {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+
+    input {
+        border: none !important;
+        background: none !important;
+        pointer-events: none;
+    }
+
+
+    td[data-value]:before {
+        content: attr(data-value);
+        white-space: pre-wrap;
+    }
+
+    td input {
+        display: none;
+    }
+}
+
+.analysis-text {
+    font-size: 18px;
+    text-align: justify;
+    line-height: 1.6;
+    margin-top: 8px;
+    margin-bottom: 16px;
+    color: #333;
+    font-family: 'Segoe UI';
+}
+
+@media print {
+    .print-center-page {
+        height: 170mm !important;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        page-break-after: always;
+    }
+}
+
+@media print {
+    input {
+        display: none !important;
+    }
+
+    td[data-value]::before {
+        content: attr(data-value);
+        display: block;
+        white-space: pre-wrap;
+        min-height: 1.5em;
+    }
+}

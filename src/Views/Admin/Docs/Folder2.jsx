@@ -15,8 +15,10 @@ const Folder2 = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        dispatch(handle_get_dir(`${folder}/${file}`))
-    }, []);
+        if (adminState?.dir_glow) {
+            dispatch(handle_get_dir(`${folder}/${file}`))
+        }
+    }, [adminState?.dir_glow]);
 
     const get_files = (files) => {
         return Array.isArray(files)

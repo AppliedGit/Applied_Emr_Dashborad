@@ -1,69 +1,73 @@
-import React, { Fragment, useEffect, useRef } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Card, Form, Modal } from 'react-bootstrap';
 import { FaRegFile } from 'react-icons/fa';
 import useCommonState from 'ResuableFunctions/CustomHooks';
 import { handle_get_dir } from 'Views/Admin/Action/AdminAction';
-import { predicted_next_data, update_user_data } from '../Slice/User_slice';
+import { get_printing_data, predicted_next_data, update_user_data } from '../Slice/User_slice';
 import ShortUniqueId from 'short-unique-id';
 import ButtonComponent from 'Components/Button/Button';
 import SpinnerComponent from 'Components/Spinner/Spinner';
 import Image from 'Utils/Image';
-import { handle_correction_predicting, handle_start_predicting } from '../Action/UserAction';
-import Img from 'Components/Img/Img';
+import { handle_correction_predicting, handle_start_predicting, handleGetPrintData } from '../Action/UserAction';
 import ButtonSpinner from 'Components/Spinner/ButtonSpinner';
 import Icons from 'Utils/Icons';
+import PrintPage from './PrintPage';
 
 const Userhome = () => {
   const dispatch = useDispatch();
   const imageInputRef = useRef();
   const fileInputRef = useRef();
   const { adminState, userState } = useCommonState();
+  const [showPrintModal, setShowPrintModal] = useState(false);
   const normalize = (str) => str?.toLowerCase().replace(/[\s_]+/g, '');
 
+  const keyMap = {
+    prediction_image: 'prediction_image_show_ui',
+    upload_image: 'upload_image_show_ui'
+  }
+
+  const dataMap = {
+    prediction_image: 'prediction_image',
+    upload_image: 'upload_image',
+    file: 'excel_file'
+  }
+
+  const uiMap = {
+    prediction_image: keyMap.prediction_image,
+    upload_image: keyMap.upload_image,
+    file: 'files_show_ui'
+  }
+
   useEffect(() => {
-    dispatch(handle_get_dir())
-  }, [])
+    if (adminState?.dir_glow) {
+      dispatch(handle_get_dir())
+    }
+  }, [adminState?.dir_glow])
 
   function upload_image(e, type) {
     const selectedFiles = Array.from(e.target.files);
-    console.log(selectedFiles, type)
+    const isImageUpload = type === 'prediction_image' || type === 'upload_image';
+    const uiKey = uiMap[type] || 'files_show_ui';
+    const dataKey = dataMap[type] || 'excel_file';
 
-    if (type === "image") {
-      const existingImageUI = userState?.user_data?.image_show_ui || [];
-      const existingImageFiles = Array.from(userState?.user_data?.images || []);
-      let newImageUI = [];
+    const existingUI = userState?.user_data?.[uiKey] || [];
+    const existingFiles = Array.from(userState?.user_data?.[dataKey] || []);
 
-      Promise.all(selectedFiles.map((file) => readFile(file)))
-        .then((results) => {
-          newImageUI = [...existingImageUI, ...results];
-          const allImageFiles = [...existingImageFiles, ...selectedFiles];
+    Promise.all(selectedFiles.map(readFile))
+      .then((results) => {
+        const newUI = [...existingUI, ...results];
+        const allFiles = [...existingFiles, ...selectedFiles];
 
-          dispatch(update_user_data({
-            image_show_ui: newImageUI,
-            images: allImageFiles
-          }));
-        })
-        .catch((error) => console.error('Error reading image files:', error));
-
-    } else {
-      const existingFileUI = userState?.user_data?.files_show_ui || [];
-      const existingExcelFiles = Array.from(userState?.user_data?.excel_file || []);
-      let newFileUI = [];
-
-      console.log(selectedFiles)
-      Promise.all(selectedFiles.map((file) => readFile(file)))
-        .then((results) => {
-          newFileUI = [...existingFileUI, ...results];
-          const allExcelFiles = [...existingExcelFiles, ...selectedFiles];
-
-          dispatch(update_user_data({
-            files_show_ui: newFileUI,
-            excel_file: allExcelFiles
-          }));
-        })
-        .catch((error) => console.error('Error reading excel files:', error));
-    }
+        dispatch(update_user_data({
+          [uiKey]: newUI,
+          [dataKey]: allFiles
+        }));
+      })
+      .catch((error) => {
+        const errorContext = isImageUpload ? 'image' : 'excel';
+        console.error(`Error reading ${errorContext} files:`, error);
+      })
   }
 
   const readFile = (file) => {
@@ -81,8 +85,8 @@ const Userhome = () => {
       };
       reader.onerror = reject;
       reader.readAsDataURL(file);
-    });
-  };
+    })
+  }
 
   const filesizes = (bytes, decimals = 2) => {
     if (bytes === 0) return "0 Bytes";
@@ -91,48 +95,39 @@ const Userhome = () => {
     const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
-  };
+  }
 
-  function DeleteSelectFile(id, is_image) {
-    if (is_image) {
-      const result = userState?.user_data?.image_show_ui.filter((data) => data.id !== id);
-      const overallFile = result.map((data) => data.filename);
-      var newImages = [];
-      for (let i = 0; i < userState?.user_data?.images.length; i++) {
-        if (overallFile.includes(userState?.user_data?.images[i].name)) {
-          newImages.push(userState?.user_data?.images[i]);
-        }
-      }
+  function DeleteSelectFile(id, type) {
+    const uiKey = uiMap[type] || 'files_show_ui';
+    const dataKey = dataMap[type] || 'excel_file';
 
-      if (imageInputRef.current && !result?.length) {
-        imageInputRef.current.value = null;
-      }
-      dispatch(update_user_data({ image_show_ui: result, images: newImages }));
-    }
-    else {
-      const result = userState?.user_data?.files_show_ui.filter((data) => data.id !== id);
-      const overallFile = result.map((data) => data.filename);
-      var newFiles = [];
-      for (let i = 0; i < userState?.user_data?.excel_file.length; i++) {
-        if (overallFile.includes(userState?.user_data?.excel_file[i].name)) {
-          newFiles.push(userState?.user_data?.excel_file[i]);
-        }
-      }
+    const existingUI = userState?.user_data?.[uiKey] || [];
+    const existingFiles = userState?.user_data?.[dataKey] || [];
 
-      if (fileInputRef.current && !result?.length) {
-        fileInputRef.current.value = null;
-      }
-      dispatch(update_user_data({ files_show_ui: result, excel_file: newFiles }));
-    }
-  };
+    // Step 1: Remove file from UI list
+    const filteredUI = existingUI.filter((data) => data.id !== id);
 
-  function file_function(data, index) {
+    // Step 2: Build list of filenames remaining
+    const remainingFilenames = filteredUI.map((data) => data.filename);
+
+    // Step 3: Filter files by name (keeping only the ones still referenced)
+    const filteredFiles = existingFiles.filter((file) =>
+      remainingFilenames.includes(file.name)
+    );
+
+    // Step 4: Dispatch update
+    dispatch(update_user_data({
+      [uiKey]: filteredUI,
+      [dataKey]: filteredFiles
+    }));
+  }
+
+  function file_function(data, index, from) {
     const isStringType = typeof data === "string";
 
     if (isStringType) {
       const fileName = data?.split("/").pop();
-      const isImage = fileName?.match(/\.(jpg|jpeg|png|gif|svg)$/i);
-
+      const isImage = fileName?.match(/\.(jpg|jpeg|png|gif|svg|bmp)$/i);
       return (
         <div className="file-atc-box w-100" key={index}>
           <div className="file-image">
@@ -150,7 +145,7 @@ const Userhome = () => {
               <ButtonComponent
                 type="button"
                 className="file-action-btn w-100 text-danger"
-                clickFunction={() => DeleteSelectFile(id)}
+                clickFunction={() => DeleteSelectFile(id, from)}
                 buttonName={Icons?.Trash}
               />
             </div>
@@ -159,7 +154,7 @@ const Userhome = () => {
       );
     } else {
       const { id, filename, fileimage, datetime, filesize } = data;
-      const isImage = filename?.match(/\.(jpg|jpeg|png|gif|svg)$/i);
+      const isImage = filename?.match(/\.(jpg|jpeg|png|gif|svg|bmp)$/i);
 
       return (
         <div className="file-atc-box w-100" key={id || index}>
@@ -184,7 +179,7 @@ const Userhome = () => {
               <ButtonComponent
                 type="button"
                 className="file-action-btn w-100 text-danger"
-                clickFunction={() => DeleteSelectFile(id, isImage)}
+                clickFunction={() => DeleteSelectFile(id, from)}
                 buttonName={Icons?.Trash}
               />
             </div>
@@ -192,16 +187,14 @@ const Userhome = () => {
         </div>
       );
     }
-  };
+  }
 
   function matchedImage(filename) {
-    const matchedImage = userState?.user_data?.image_show_ui?.find((img) => {
+    return matchedImage = userState?.user_data?.prediction_image_show_ui?.find((img) => {
       const imgFilename = img?.filename;
       return normalize(imgFilename) === normalize(filename);
-    });
-
-    return matchedImage
-  };
+    })
+  }
 
   function display_folders(folders) {
     return Array.isArray(folders) ? folders.flatMap(node => {
@@ -216,40 +209,47 @@ const Userhome = () => {
       if (node.type === 'folder') return display_folders(node.children || []);
       return [];
     }) : []
-  };
+  }
 
   function handleCorrectPrediction() {
     let class_name = `${userState?.user_data?.modal}/train/${userState?.user_data?.selected_folder}`
-
-    const send_image = Array.from(userState?.user_data?.images || [])?.find((img) => {
-      const imgFilename = img?.name;
-      return normalize(imgFilename) === normalize(userState?.predicted_single_data[0]?.filename || '');
-    });
+    const send_image = Array.from(userState?.user_data?.prediction_image || [])
 
     dispatch(handle_correction_predicting({ class_name, send_image }))
-  };
+  }
+
+  function handleprint() {
+    if (userState?.user_data?.modal) {
+      dispatch(handleGetPrintData({ model: userState?.user_data?.modal || '' }));
+      setShowPrintModal(true);
+    } else {
+      dispatch(get_printing_data({ type: 'failure', message: 'Model name required' }))
+    }
+  }
 
   return (
     <div className="container pt-4">
       <div className="w-100 mb-3 ps-2">
         <img src={Image?.CompanyLogo} alt="Emr" className='Emr-logo' />
       </div>
+      <hr />
 
       {adminState?.dir_glow ?
-        <div className="row align-items-center justify-content-center" style={{ height: "42rem" }}>
+        <div className="row align-items-center justify-content-center" style={{ height: "49rem" }}>
           <div className="col-6 text-center">
             <SpinnerComponent variant="primary" />
             <p className='mt-1'>Collecting available models..</p>
           </div>
         </div>
         :
-        <div className="row g-4 align-items-stretch">
-          <div className="col-sm-12 col-md-6 user_home_height">
+        <div className="row g-4">
+          {/* Left Card */}
+          <div className="col-12 col-md-6 user_home_height">
             <Card className="rounded-4 border-0 shadow-sm h-100">
               <Card.Header className="bg-transparent pt-3">
                 <h5 className="heading-1 d-flex align-items-center gap-2">Compare Image</h5>
               </Card.Header>
-              <Card.Body style={{ height: '100%', overflowY: 'scroll' }}>
+              <Card.Body className="overflow-auto" style={{ maxHeight: '70vh' }}>
                 <Form.Group className="mb-3">
                   <h6 className="form-label heading-2">Image Model Ref</h6>
                   <Form.Select
@@ -257,91 +257,96 @@ const Userhome = () => {
                     onChange={(e) => dispatch(update_user_data({ modal: e.target.value }))}
                   >
                     <option value="">Select a Model</option>
-                    {
-                      adminState?.dir_glow ?
-                        null
-                        :
-                        adminState?.dir_data?.length ?
-                          adminState?.dir_data?.map((item, index) => (
-                            item.status === 'trained' ?
-                              <option value={item?.name} key={index}>{item?.name || ''}</option>
-                              :
-                              null
-                          ))
-                          :
-                          null
-                    }
+                    {adminState?.dir_data?.map((item, index) => (
+                      item.status === 'trained' && <option key={index} value={item?.name}>{item?.name}</option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+
+                <Form.Group className="mb-3">
+                  <h6 className="form-label heading-2">Phase</h6>
+                  <Form.Select
+                    value={userState?.user_data?.phase || ''}
+                    onChange={(e) => dispatch(update_user_data({ phase: e.target.value }))}
+                  >
+                    {userState?.phases?.map((item, index) => (
+                      <option key={index} value={item?.replaceAll(" ", "_")} disabled={item !== userState?.user_data?.phase}>{item}</option>
+                    ))}
                   </Form.Select>
                 </Form.Group>
 
                 <Form.Group className="mb-4">
-                  <h6 className="form-label heading-2">Upload Image</h6>
-                  <div className="border rounded position-relative text-center p-4 mb-3"
-                    style={{ borderStyle: 'dashed', height: '100px' }} >
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="position-absolute top-0 start-0 w-100 h-100 opacity-0"
-                      onChange={(e) => upload_image(e, "image")}
-                      multiple
-                      ref={imageInputRef}
-                    />
-                    <div className="d-flex align-items-center h-100">
-                      <div className='col-2'>{Icons.Browse}</div>
-                      <p className="text-muted mb-0">Drop file or Browse</p>
+                  <h6 className="form-label heading-2">Prediction Image</h6>
+                  {
+                    !userState?.user_data?.prediction_image_show_ui?.length &&
+                    <div className="border rounded position-relative text-center p-3 d-flex flex-column justify-content-center align-items-center" style={{ borderStyle: 'dashed', height: '100px' }}>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="position-absolute top-0 start-0 w-100 h-100 opacity-0"
+                        onChange={(e) => upload_image(e, "prediction_image")}
+                      />
+                      <div className='mb-2'>{Icons.Browse}</div>
+                      <p className="text-muted mb-0 text-center small">Drop file or Browse</p>
                     </div>
-                  </div>
+                  }
                 </Form.Group>
-                {userState?.user_data?.image_show_ui?.map((data, index) => {
-                  return file_function(data, index)
-                })}
+                {userState?.user_data?.prediction_image_show_ui?.map((data, index) => file_function(data, index, "prediction_image"))}
 
                 <Form.Group className="mb-3">
                   <h6 className="form-label heading-2">Upload CSV File</h6>
-                  <div className="border rounded position-relative text-center p-4 mb-3"
-                    style={{ borderStyle: 'dashed', height: '100px' }} >
-                    <input
-                      type="file"
-                      accept=".ods, .xls, .xlsx"
-                      className="position-absolute top-0 start-0 w-100 h-100 opacity-0"
-                      onChange={(e) => upload_image(e, "file")}
-                      multiple
-                      ref={fileInputRef}
-                    />
-                    <div className="d-flex align-items-center h-100">
-                      <div className='col-2'>
-                        {Icons.Browse}
-                      </div>
-                      <div className="col-10 text-start">
-                        <p className="text-muted mb-0">Drop file or Browse</p>
-                        <p className="text-secondary mb-0">Format: ods, xls</p>
-                      </div>
+                  {
+                    !userState?.user_data?.files_show_ui?.length &&
+                    <div className="border rounded position-relative text-center p-3 d-flex flex-column justify-content-center align-items-center" style={{ borderStyle: 'dashed', height: '100px' }}>
+                      <input
+                        type="file"
+                        accept=".ods, .xls, .xlsx"
+                        className="position-absolute top-0 start-0 w-100 h-100 opacity-0"
+                        onChange={(e) => upload_image(e, "file")}
+                      />
+                      <div className='mb-2'>{Icons.Browse}</div>
+                      <p className="text-muted mb-0 text-center small">Drop file or Browse (Format: ods, xls)</p>
                     </div>
-                  </div>
+                  }
                 </Form.Group>
-                {userState?.user_data?.files_show_ui?.map((data, index) => {
-                  return file_function(data, index)
-                })}
+                {userState?.user_data?.files_show_ui?.map((data, index) => file_function(data, index, "file"))}
+
+                <Form.Group className="mb-4">
+                  <h6 className="form-label heading-2">Upload Image</h6>
+                  {
+                    !userState?.user_data?.upload_image_show_ui?.length &&
+                    <div className="border rounded position-relative text-center p-3 d-flex flex-column justify-content-center align-items-center" style={{ borderStyle: 'dashed', height: '100px' }}>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="position-absolute top-0 start-0 w-100 h-100 opacity-0"
+                        onChange={(e) => upload_image(e, "upload_image")}
+                      />
+                      <div className='mb-2'>{Icons.Browse}</div>
+                      <p className="text-muted mb-0 text-center small">Drop file or Browse</p>
+                    </div>
+                  }
+                </Form.Group>
+                {userState?.user_data?.upload_image_show_ui?.map((data, index) => file_function(data, index, "upload_image"))}
               </Card.Body>
 
-              <Card.Footer className="bg-transparent d-flex justify-content-end gap-2">
+              <Card.Footer className="bg-transparent d-flex flex-wrap justify-content-end gap-2">
                 <ButtonComponent
-                  buttonName="Next"
+                  buttonName="Predict"
                   className="btn-primary"
                   clickFunction={() => dispatch(handle_start_predicting(userState?.user_data))}
-                  btnDisable={userState?.is_predicting}
                 />
               </Card.Footer>
             </Card>
           </div>
 
-          <div className="col-sm-12 col-md-6 user_home_height">
+          {/* Right Card */}
+          <div className="col-12 col-md-6 user_home_height">
             <Card className="rounded-4 border-0 shadow-sm h-100">
               <Card.Header className="bg-transparent pt-3">
                 <h5 className="heading-1 d-flex align-items-center gap-2">Image Pattern Results</h5>
               </Card.Header>
-
-              <Card.Body style={{ height: '100%', overflowY: 'scroll' }}>
+              <Card.Body className="overflow-auto" style={{ maxHeight: '70vh' }}>
                 {userState?.is_predicting ?
                   <div className='h-100 row align-items-center justify-content-center'>
                     <div className="col-8 text-center">
@@ -357,105 +362,95 @@ const Userhome = () => {
                     </div>
                     :
                     <div className='col-12'>
-                      {
-                        userState?.predicted_single_data?.map((item, index) => (
-                          <Fragment>
-                            <div className="col-12 text-center mb-3">
-                              <Img src={matchedImage(item?.filename)?.fileimage || ''} alt="prediction response" width="90%" height="280rem" />
-                            </div>
-
-                            {Object.entries(item).map(([key, value]) => {
-                              if (key !== "corrected") {
-                                switch (key) {
-                                  case "output":
-                                    return <div className="mb-3">
-                                      <h6 className="heading-2">{key}</h6>
-                                      <div className="p-2">
-                                        <textarea rows={8} cols={65} className="form-control custom-textarea">{value || ''}</textarea>
-                                      </div>
-                                    </div>
-
-                                  case "predicted_class":
-                                    return <div className="mb-3">
-                                      <h6 className="heading-2">{key}</h6>
-                                      <div className="p-2">
-                                        <p>{value ? value.split("/").filter(Boolean).pop() : ''}</p>
-                                      </div>
-                                    </div>
-
-                                  default:
-                                    return <div className="mb-3">
-                                      <h6 className="heading-2">{key}</h6>
-                                      <div className="p-2">
-                                        <p>{value || ''}</p>
-                                      </div>
-                                    </div>
-                                }
-                              }
-                            })}
-                          </Fragment>
-                        ))
-                      }
+                      {userState?.predicted_data?.map((item, index) => (
+                        <Fragment key={index}>
+                          <div className="col-12 text-center mb-3">
+                            <img src={matchedImage(item?.filename)?.fileimage || ''} alt="prediction response" className="img-fluid rounded" />
+                          </div>
+                          {Object.entries(item).map(([key, value]) => (
+                            key !== "corrected" && (
+                              <div className="mb-3" key={key}>
+                                <h6 className="heading-2">{key}</h6>
+                                <div className="p-2">
+                                  {key === 'output' ?
+                                    <textarea rows={8} className="form-control custom-textarea w-100 pe-none">{value}</textarea>
+                                    :
+                                    <p>{key === 'predicted_class' ? value?.split("/").filter(Boolean).pop() : value}</p>
+                                  }
+                                </div>
+                              </div>
+                            )
+                          ))}
+                        </Fragment>
+                      ))}
                     </div>
                 }
               </Card.Body>
 
-              {!userState?.is_predicting && userState.predicted_data ?
-                <Card.Footer className="bg-transparent d-flex justify-content-end gap-2">
+              {!userState?.is_predicting && userState?.predicted_data && (
+                <Card.Footer className="bg-transparent d-flex flex-wrap justify-content-end gap-2">
                   <ButtonComponent
                     buttonName="Add to image library"
                     className="btn-primary"
-                    clickFunction={() => dispatch(update_user_data({ correct_prediction_modal: true, folder_type: "Use Class", selected_folder: null }))}
+                    clickFunction={() => dispatch(update_user_data({ correct_prediction_modal: true, folder_type: "Use Class" }))}
+                  />
+
+                  {
+                    userState?.user_data?.phase === "B_Phase_Lower_Direction" && userState?.predicted_data?.length ?
+                      <ButtonComponent
+                        buttonName="Print Result"
+                        className="btn-primary"
+                        clickFunction={handleprint}
+                      />
+                      :
+                      null
+                  }
+
+                  <PrintPage
+                    show={showPrintModal}
+                    onHide={() => setShowPrintModal(false)}
+                    userState={userState}
                   />
 
                   <ButtonComponent
-                    buttonName="Print Result"
+                    buttonName={userState?.predicted_data?.length && userState?.user_data?.phase !== "B_Phase_Lower_Direction" ? "Next" : "Done"}
                     className="btn-primary"
-                    btnDisable={true}
-                  />
-
-                  <ButtonComponent
-                    buttonName="Next"
-                    className="btn-primary"
-                    clickFunction={() => dispatch(predicted_next_data())}
-                    btnDisable={userState?.predicted_data?.length <= 1}
+                    clickFunction={() => dispatch(predicted_next_data(userState?.user_data?.phase === "B_Phase_Lower_Direction" && userState?.predicted_data?.length ? { clear_all_data: true } : {}))}
+                    btnDisable={!userState?.predicted_data?.length}
                   />
                 </Card.Footer>
-                :
-                null
-              }
+              )}
             </Card>
           </div>
         </div>
       }
 
       {/* Modal */}
-      <Modal show={userState?.user_data?.correct_prediction_modal} centered onHide={() => dispatch(update_user_data({ correct_prediction_modal: false }))}>
+      <Modal
+        show={userState?.user_data?.correct_prediction_modal}
+        centered
+        onHide={() => dispatch(update_user_data({ correct_prediction_modal: false, selected_folder: '' }))}>
         <Modal.Header closeButton>
           <h5 className="modal-title">Select Class Name</h5>
         </Modal.Header>
         <Modal.Body>
-          <div className="d-flex gap-2 p-3">
-            <div className="col-12 row">
-              {["Create Class", "Use Class"]?.map((item, ind) =>
-                <div className="col" key={ind}>
-                  <input
-                    type="radio"
-                    name="modal"
-                    value={item}
-                    id={item + ind}
-                    onChange={(e) => dispatch(update_user_data({ folder_type: e.target.value }))}
-                    checked={item === userState?.user_data?.folder_type}
-                  />
-                  <label htmlFor={item + ind} className="form-label ps-2">{item}</label>
-                </div>
-              )}
-            </div>
-          </div>
+          <div className="row gy-3 px-2">
+            {['Create Class', 'Use Class'].map((item, ind) => (
+              <div className="col-6" key={ind}>
+                <input
+                  type="radio"
+                  name="modal"
+                  value={item}
+                  id={item + ind}
+                  onChange={(e) => dispatch(update_user_data({ folder_type: e.target.value }))}
+                  checked={item === userState?.user_data?.folder_type}
+                />
+                <label htmlFor={item + ind} className="form-label ps-2">{item}</label>
+              </div>
+            ))}
 
-          <div className="col-12 ps-3">
-            {userState?.user_data?.folder_type === "Create Class" ?
-              <Fragment>
+            {userState?.user_data?.folder_type === 'Create Class' ?
+              <div className="col-12">
                 <label htmlFor='add_new_folder' className="form-label ps-2">Add New Folder</label>
                 <input
                   type="text"
@@ -465,9 +460,9 @@ const Userhome = () => {
                   value={userState?.user_data?.selected_folder}
                   onChange={(e) => dispatch(update_user_data({ selected_folder: e.target.value }))}
                 />
-              </Fragment>
+              </div>
               :
-              <Fragment>
+              <div className="col-12">
                 <h6>Existing folders</h6>
                 {display_folders(adminState?.dir_data)[0]?.children?.map((item, index) => (
                   <div className="form-check" key={index}>
@@ -483,33 +478,33 @@ const Userhome = () => {
                     <label className="form-check-label" htmlFor={item?.name}>{item?.name}</label>
                   </div>
                 ))}
-              </Fragment>
+              </div>
             }
           </div>
         </Modal.Body>
-        <Modal.Footer className="d-flex justify-content-between">
+        <Modal.Footer className="d-flex justify-content-between flex-wrap">
           <div className="col p-1">
             <ButtonComponent
               buttonName="Cancel"
-              className="btn-secondary w-100"
-              clickFunction={() => dispatch(update_user_data({ correct_prediction_modal: false }))}
+              className="btn-secondary w-100 mb-2 mb-sm-0 me-sm-2"
+              clickFunction={() => dispatch(update_user_data({ correct_prediction_modal: false, selected_folder: '' }))}
             />
           </div>
+
           <div className="col p-1">
-            {
-              userState?.correction_predicting_glow ?
-                <ButtonSpinner title="Submiting" spinner_width_height="1.1rem" className="ButtonSpinner w-100" />
-                :
-                <ButtonComponent
-                  buttonName="Submit"
-                  className="btn-primary w-100"
-                  clickFunction={handleCorrectPrediction}
-                />
+            {userState?.correction_predicting_glow ?
+              <ButtonSpinner title="Submitting" spinner_width_height="1.1rem" className="ButtonSpinner w-100" />
+              :
+              <ButtonComponent
+                buttonName="Submit"
+                className="btn-primary w-100"
+                clickFunction={handleCorrectPrediction}
+              />
             }
           </div>
         </Modal.Footer>
       </Modal>
-    </div>
+    </div >
   );
 };
 

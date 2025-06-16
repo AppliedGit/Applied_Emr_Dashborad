@@ -85,11 +85,11 @@
     margin-bottom: 0;
 }
 
-.user_home_height{
+.user_home_height {
     height: calc(100vh - 17rem);
 }
 
-.train_command_prompt{
+.train_command_prompt {
     padding: 1rem 1.5rem;
     overflow-y: scroll;
     height: 20rem;
@@ -102,5 +102,92 @@
     height: auto !important;
     width: auto !important;
     resize: both;
-  }
-  
+}
+
+
+@media print {
+    body * {
+        visibility: hidden !important;
+    }
+
+    .container {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    #modal-content,
+    #modal-content * {
+        visibility: visible !important;
+    }
+
+    #modal-content {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: auto !important;
+        overflow: visible !important;
+        background: white !important;
+        padding: 20px;
+    }
+
+    .modal,
+    .modal-dialog,
+    .modal-content {
+        position: static !important;
+        overflow: visible !important;
+        width: auto !important;
+        max-width: 100% !important;
+        height: auto !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        border: none !important;
+    }
+
+    .scrollable {
+        overflow: visible !important;
+        max-height: none !important;
+        height: auto !important;
+    }
+
+    .modal-header,
+    .modal-footer,
+    .d-print-none {
+        display: none !important;
+    }
+
+    input {
+        border: none !important;
+    }
+
+    table {
+        border-collapse: collapse !important;
+        width: 100% !important;
+    }
+
+    table th,
+    table td {
+        border: 1px solid #c9202a !important;
+        padding: 8px !important;
+    }
+
+    .custom-header th {
+        background-color: #f5f5f5 !important;
+        color: #000 !important;
+    }
+
+    .bg-danger,
+    .custom-header {
+        background-color: #c9202a !important;
+        color: white !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .print_page_header{
+        padding-top: 0;
+        margin: 0 0 2rem 0;
+    }
+}

@@ -15,17 +15,15 @@ const Create = () => {
   const imageInputRef = useRef();
 
   useEffect(() => {
-    dispatch(handle_get_dir())
-  }, [])
+    if (adminState?.dir_glow) {
+      dispatch(handle_get_dir())
+    }
+  }, [adminState?.dir_glow])
 
   const handleDelete = (indexToRemove) => {
     const updated = [...adminState.create_image_modal.images];
     updated.splice(indexToRemove, 1);
-
-    if (imageInputRef.current && !updated?.length) {
-      imageInputRef.current.value = null;
-    }
-    dispatch(update_create_image_modal({ images: updated }));
+    dispatch(update_create_image_modal({ delete_images: updated }));
   };
 
   const handleCheck = () => {

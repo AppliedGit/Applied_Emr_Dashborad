@@ -1,9 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { loginResponse } from "Views/Common/Slice/Common_slice";
+import { correction_predicting } from "Views/User/Slice/User_slice";
 
 const adminSlice = createSlice({
     name: "admin_slice",
     initialState: {
-        dir_glow: false,
+        dir_glow: true,
         is_streaming: false,
         traing_command_prompt: [],
         training_percentage: 0,
@@ -55,6 +57,7 @@ const adminSlice = createSlice({
                         }
 
                         state.create_image_modal.folder_name = value;
+                        state.create_image_modal.images = [];
                         break;
                     }
 
@@ -62,6 +65,7 @@ const adminSlice = createSlice({
                         state.create_image_modal.modal_type = value;
                         state.create_image_modal.endpoint = value === "Create new model" ? "/create_class" : "/upload_image";
                         state.create_image_modal.folder_name = "";
+                        state.create_image_modal.images = [];
                         state.create_image_modal.class_names = [];
                         state.create_image_modal.no_of_classes = 0;
                         break;
@@ -78,8 +82,39 @@ const adminSlice = createSlice({
                             state.create_image_modal.no_of_classes = class_names_array?.length || 0;
                         }
                         state.create_image_modal.new_class_name = "";
+                        state.create_image_modal.images = [];
                         break;
                     }
+
+                    case "images": {
+                        // 🔹 1. Normalise the incoming data (could be FileList or array)
+                        const incomingFiles = Array.isArray(value) ? value : Array.from(value);
+
+                        // 🔹 2. Start with a *plain array* of existing files
+                        const currentEntry = state.create_image_modal[key];
+                        const currentArr =
+                            currentEntry && currentEntry instanceof FileList
+                                ? Array.from(currentEntry)     // FileList → array
+                                : Array.isArray(currentEntry)
+                                    ? currentEntry                // already array
+                                    : [];                         // first time
+
+                        // 🔹 3. Append the new files
+                        currentArr.push(...incomingFiles);
+
+                        // 🔹 4. Turn the array back into a fresh FileList
+                        const dt = new DataTransfer();
+                        currentArr.forEach((file) => dt.items.add(file));
+
+                        // 🔹 5. Store the *new* FileList in state
+                        state.create_image_modal[key] = dt.files;          // <-- real FileList
+                        break;
+                    }
+
+                    case "delete_images":
+                        state.create_image_modal.images = value;
+                        break;
+
 
                     default:
                         state.create_image_modal[key] = value;
@@ -97,6 +132,7 @@ const adminSlice = createSlice({
 
                 case "response":
                     state.create_update_modal_spinner = false
+                    state.dir_glow = true
                     state.create_image_modal = { modal_type: 'Update model', endpoint: "/upload_image" }
                     break;
 
@@ -144,6 +180,7 @@ const adminSlice = createSlice({
                     }
 
                     state.delete_modal_spinner = false
+                    state.dir_glow = true
                     break;
 
                 case "failure":
@@ -188,6 +225,41 @@ const adminSlice = createSlice({
                     break;
             }
         },
+        // train_model_progress(state, action) {
+        //     const { type, data } = action.payload;
+
+        //     switch (type) {
+        //         case "request":
+        //             if (data?.show === "training_status") {
+        //                 state.train_path = data?.path
+        //                 state.traing_command_prompt = []
+        //                 state.training_percentage = 0
+        //                 state.is_streaming = true
+        //             }
+        //             if (data?.show !== "training_status") state.traing_command_prompt = [...state.traing_command_prompt, data]
+        //             break;
+
+        //         case "response":
+        //             state.traing_command_prompt = [...state.traing_command_prompt, data]
+        //             state.is_streaming = true
+        //             if (data?.epoch) state.training_percentage = data?.epoch;
+        //             if (data?.epoch === 100) {
+        //                 let update_dir = state.dir_data?.map(item =>
+        //                     item.name === state.train_path ? { ...item, status: "trained" } : item
+        //                 )
+
+        //                 state.dir_data = update_dir
+        //                 state.is_streaming = false
+        //             }
+        //             break;
+
+        //         case "failure":
+        //             state.is_streaming = false
+
+        //         default:
+        //             break;
+        //     }
+        // },
         train_model_progress(state, action) {
             const { type, data } = action.payload;
 
@@ -202,7 +274,7 @@ const adminSlice = createSlice({
                     if (data?.show !== "training_status") state.traing_command_prompt = [...state.traing_command_prompt, data]
                     break;
 
-                case "response": 
+                case "response":
                     const updatedPrompt = [...state.traing_command_prompt]
                         .filter((item) => item?.epoch !== data?.epoch || item?.message !== data?.message);
 
@@ -228,6 +300,18 @@ const adminSlice = createSlice({
                     break;
             }
         }
+    },
+    extraReducers: (builder) => {
+        builder
+            .addCase(loginResponse, (state, action) => {
+                state.dir_glow = true;
+            })
+
+            .addCase(correction_predicting, (state, action) => {
+                if (action?.payload?.type === "response") {
+                    state.dir_glow = true;
+                }
+            })
     }
 })
 
