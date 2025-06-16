@@ -180,6 +180,7 @@ const adminSlice = createSlice({
                     }
 
                     state.delete_modal_spinner = false
+                    state.dir_glow = true
                     break;
 
                 case "failure":
