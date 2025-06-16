@@ -16,8 +16,6 @@ import PrintPage from './PrintPage';
 
 const Userhome = () => {
   const dispatch = useDispatch();
-  const imageInputRef = useRef();
-  const fileInputRef = useRef();
   const { adminState, userState } = useCommonState();
   const [showPrintModal, setShowPrintModal] = useState(false);
   const normalize = (str) => str?.toLowerCase().replace(/[\s_]+/g, '');
