@@ -174,7 +174,7 @@ const PrintableReport = forwardRef(
                                 ]}
                             </p>
 
-                            <h5 className="mt-4 heading-1 text-danger">Motor Current Profile :</h5>
+                            <h5 className="mt-4 heading-1 text-danger page-break">Motor Current Profile :</h5>
                             <div className="text-center my-3">
                                 <img src={phase?.upload_image} alt="Motor Current Profile" className="img-fluid" />
                             </div>
