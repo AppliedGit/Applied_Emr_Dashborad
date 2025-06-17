@@ -100,10 +100,6 @@ const userSlice = createSlice({
         case "response":
           state.correction_predicting_glow = false
           state.user_data.correct_prediction_modal = false
-          state.user_data = {};
-          state.user_data.folder_type = "Use Class";
-          state.user_data.phase = "R_Phase_Raise_Direction";
-          state.predicted_data = [];
           break;
 
         case "failure":

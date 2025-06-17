@@ -306,12 +306,6 @@ const adminSlice = createSlice({
             .addCase(loginResponse, (state, action) => {
                 state.dir_glow = true;
             })
-
-            .addCase(correction_predicting, (state, action) => {
-                if (action?.payload?.type === "response") {
-                    state.dir_glow = true;
-                }
-            })
     }
 })
 

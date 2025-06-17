@@ -38,10 +38,8 @@ const Userhome = () => {
   }
 
   useEffect(() => {
-    if (adminState?.dir_glow) {
       dispatch(handle_get_dir())
-    }
-  }, [adminState?.dir_glow])
+  }, [])
 
   function upload_image(e, type) {
     const selectedFiles = Array.from(e.target.files);
