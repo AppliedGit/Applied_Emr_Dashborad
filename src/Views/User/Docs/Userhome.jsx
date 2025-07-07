@@ -19,6 +19,24 @@ const Userhome = () => {
   const { adminState, userState } = useCommonState();
   const [showPrintModal, setShowPrintModal] = useState(false);
   const normalize = (str) => str?.toLowerCase().replace(/[\s_]+/g, '');
+  const [modalType, setModalType] = useState("Single Phase");
+
+
+  const phase = userState?.user_data?.phase;
+  const hasPredictedData = !!userState?.predicted_data?.length;
+
+  // Define start and end based on modal type
+  const isSinglePhase = modalType === "Single Phase";
+  const isMultiPhase = modalType === "Multi Phase";
+
+  const isFinalPhase =
+    (isSinglePhase && phase === "R_Phase_Lower_Direction") ||
+    (isMultiPhase && phase === "B_Phase_Lower_Direction");
+
+  const showNext =
+    !isFinalPhase && hasPredictedData; // any phase before final with data
+
+  const buttonLabel = showNext ? "Next" : "Done";
 
   const keyMap = {
     prediction_image: 'prediction_image_show_ui',
@@ -38,7 +56,7 @@ const Userhome = () => {
   }
 
   useEffect(() => {
-      dispatch(handle_get_dir())
+    dispatch(handle_get_dir())
   }, [])
 
   function upload_image(e, type) {
@@ -211,7 +229,7 @@ const Userhome = () => {
     let class_name = `${userState?.user_data?.modal}/train/${userState?.user_data?.selected_folder}`
     const send_image = Array.from(userState?.user_data?.prediction_image || [])
 
-    dispatch(handle_correction_predicting({ class_name, send_image }))
+    dispatch(handle_correction_predicting({ class_name, send_image, phase: userState?.user_data?.phase || '' }))
   }
 
   function handleprint() {
@@ -257,22 +275,58 @@ const Userhome = () => {
                       item.status === 'trained' && <option key={index} value={item?.name}>{item?.name}</option>
                     ))}
                   </Form.Select>
-                </Form.Group>
 
-                <Form.Group className="mb-3">
-                  <h6 className="form-label heading-2">Phase</h6>
-                  <Form.Select
-                    value={userState?.user_data?.phase || ''}
-                    onChange={(e) => dispatch(update_user_data({ phase: e.target.value }))}
-                  >
-                    {userState?.phases?.map((item, index) => (
-                      <option key={index} value={item?.replaceAll(" ", "_")} disabled={item !== userState?.user_data?.phase}>{item}</option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
+                  <Form.Group className="mb-2">
+                    <div className="row mt-2">
+                      <h6 className="heading-2 mb-2">Select Phase Type</h6>
+                      {["Single Phase", "Multi Phase"].map((item, ind) => (
+                        <div className="col-auto" key={ind}>
+                          <div className="form-check form-check-inline">
+                            <input
+                              type="radio"
+                              name="modal_type"
+                              value={item}
+                              id={item + ind}
+                              className="form-check-input"
+                              onChange={() => setModalType(item)}
+                              checked={modalType === item}
+                            />
+                            <label className="form-check-label" htmlFor={item + ind}>
+                              {item}
+                            </label>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </Form.Group>
+                  <Form.Group className="mb-3">
+                    <h6 className="form-label heading-2">Phase</h6>
+                    <Form.Select
+                      value={userState?.user_data?.phase || ''}
+                      onChange={(e) => dispatch(update_user_data({ phase: e.target.value }))}
+                    >
+                      {(userState?.phases || [])
+                        .filter((item) => {
+                          if (modalType === "Single Phase") {
+                            return item?.startsWith("R Phase");
+                          }
+                          return true
+                        })
+                        .map((item, index) => (
+                          <option
+                            key={index}
+                            value={item?.replaceAll(" ", "_")}
+                            disabled={item !== userState?.user_data?.phase}
+                          >
+                            {item}
+                          </option>
+                        ))}
+                    </Form.Select>
+                  </Form.Group>
 
+                </Form.Group>
                 <Form.Group className="mb-4">
-                  <h6 className="form-label heading-2">Prediction Image</h6>
+                  <h6 className="form-label heading-2">Upload Graph  Image</h6>
                   {
                     !userState?.user_data?.prediction_image_show_ui?.length &&
                     <div className="border rounded position-relative text-center p-3 d-flex flex-column justify-content-center align-items-center" style={{ borderStyle: 'dashed', height: '100px' }}>
@@ -290,7 +344,7 @@ const Userhome = () => {
                 {userState?.user_data?.prediction_image_show_ui?.map((data, index) => file_function(data, index, "prediction_image"))}
 
                 <Form.Group className="mb-3">
-                  <h6 className="form-label heading-2">Upload CSV File</h6>
+                  <h6 className="form-label heading-2">Upload Transition Time</h6>
                   {
                     !userState?.user_data?.files_show_ui?.length &&
                     <div className="border rounded position-relative text-center p-3 d-flex flex-column justify-content-center align-items-center" style={{ borderStyle: 'dashed', height: '100px' }}>
@@ -308,7 +362,7 @@ const Userhome = () => {
                 {userState?.user_data?.files_show_ui?.map((data, index) => file_function(data, index, "file"))}
 
                 <Form.Group className="mb-4">
-                  <h6 className="form-label heading-2">Upload Image</h6>
+                  <h6 className="form-label heading-2">Upload Motor Current profile Image</h6>
                   {
                     !userState?.user_data?.upload_image_show_ui?.length &&
                     <div className="border rounded position-relative text-center p-3 d-flex flex-column justify-content-center align-items-center" style={{ borderStyle: 'dashed', height: '100px' }}>
@@ -357,22 +411,57 @@ const Userhome = () => {
                       <p className="mt-2">No image loaded yet</p>
                     </div>
                     :
+                    // <div className='col-12'>
+                    //   {userState?.predicted_data?.map((item, index) => (
+                    //     <Fragment key={index}>
+                    //       <div className="col-12 text-center mb-3">
+                    //         <img src={matchedImage(item?.filename)?.fileimage || ''} alt="prediction response" className="img-fluid rounded" />
+                    //       </div>
+                    //       {Object.entries(item).map(([key, value]) => (
+                    //         key !== "corrected" && (
+                    //           <div className="mb-3" key={key}>
+                    //             <h6 className="heading-2">{key}</h6>
+                    //             <div className="p-2">
+                    //               {key === 'output' ?
+                    //                 <textarea rows={8} className="form-control custom-textarea w-100 pe-none">{value}</textarea>
+                    //                 :
+                    //                 <p>{key === 'predicted_class' ? value?.split("/").filter(Boolean).pop() : value}</p>
+                    //               }
+                    //             </div>
+
+                    //           </div>
+                    //         )
+                    //       ))}
+                    //     </Fragment>
+                    //   ))}
+                    // </div>
                     <div className='col-12'>
                       {userState?.predicted_data?.map((item, index) => (
                         <Fragment key={index}>
                           <div className="col-12 text-center mb-3">
                             <img src={matchedImage(item?.filename)?.fileimage || ''} alt="prediction response" className="img-fluid rounded" />
                           </div>
-                          {Object.entries(item).map(([key, value]) => (
-                            key !== "corrected" && (
+
+                          {/* Define the desired order of keys */}
+                          {['predicted_class', 'confidence', 'transition', 'output', 'filename'].map((key) => (
+                            item[key] !== undefined && key !== "corrected" && (
                               <div className="mb-3" key={key}>
                                 <h6 className="heading-2">{key}</h6>
                                 <div className="p-2">
-                                  {key === 'output' ?
-                                    <textarea rows={8} className="form-control custom-textarea w-100 pe-none">{value}</textarea>
-                                    :
-                                    <p>{key === 'predicted_class' ? value?.split("/").filter(Boolean).pop() : value}</p>
-                                  }
+                                  {key === 'output' ? (
+                                    <textarea
+                                      rows={8}
+                                      className="form-control custom-textarea w-100 pe-none"
+                                      readOnly
+                                      value={item[key]}
+                                    />
+                                  ) : (
+                                    <p>
+                                      {key === 'predicted_class'
+                                        ? item[key]?.split("/").filter(Boolean).pop()
+                                        : item[key]}
+                                    </p>
+                                  )}
                                 </div>
                               </div>
                             )
@@ -380,6 +469,7 @@ const Userhome = () => {
                         </Fragment>
                       ))}
                     </div>
+
                 }
               </Card.Body>
 
@@ -391,16 +481,30 @@ const Userhome = () => {
                     clickFunction={() => dispatch(update_user_data({ correct_prediction_modal: true, folder_type: "Use Class" }))}
                   />
 
-                  {
-                    userState?.user_data?.phase === "B_Phase_Lower_Direction" && userState?.predicted_data?.length ?
+                  
+                   {/* { userState?.user_data?.phase === "B_Phase_Lower_Direction" && userState?.predicted_data?.length ?
+                  <ButtonComponent
+                    buttonName="Print Result"
+                    className="btn-primary"
+                    clickFunction={handleprint}
+                  />
+                   :
+                      null
+                  } */}
+                 {
+                    (userState?.user_data?.phase === "R_Phase_Lower_Direction" ||
+                      userState?.user_data?.phase === "B_Phase_Lower_Direction") &&
+                      userState?.predicted_data?.length ? (
                       <ButtonComponent
                         buttonName="Print Result"
                         className="btn-primary"
                         clickFunction={handleprint}
                       />
-                      :
-                      null
-                  }
+                    ) : null
+                  } 
+                                    
+                
+
 
                   <PrintPage
                     show={showPrintModal}
@@ -409,11 +513,20 @@ const Userhome = () => {
                   />
 
                   <ButtonComponent
-                    buttonName={userState?.predicted_data?.length && userState?.user_data?.phase !== "B_Phase_Lower_Direction" ? "Next" : "Done"}
+                    buttonName={buttonLabel}
                     className="btn-primary"
-                    clickFunction={() => dispatch(predicted_next_data(userState?.user_data?.phase === "B_Phase_Lower_Direction" && userState?.predicted_data?.length ? { clear_all_data: true } : {}))}
-                    btnDisable={!userState?.predicted_data?.length}
+                    clickFunction={() => {
+                      if (isFinalPhase && hasPredictedData) {
+                        // Final phase: run "done" logic
+                        dispatch(predicted_next_data({ clear_all_data: true }));
+                      } else {
+                        // Normal flow
+                        dispatch(predicted_next_data({}));
+                      }
+                    }}
+                    btnDisable={!hasPredictedData}
                   />
+
                 </Card.Footer>
               )}
             </Card>
@@ -500,6 +613,7 @@ const Userhome = () => {
           </div>
         </Modal.Footer>
       </Modal>
+
     </div >
   );
 };

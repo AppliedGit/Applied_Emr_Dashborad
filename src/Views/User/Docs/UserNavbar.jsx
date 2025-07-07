@@ -2,7 +2,6 @@ import ButtonComponent from 'Components/Button/Button';
 import React from 'react'
 import { useDispatch } from 'ResuableFunctions/CustomHooks';
 import Icons from 'Utils/Icons';
-import Image from 'Utils/Image';
 import { logout } from 'Views/Common/Slice/Common_slice';
 
 const UserNavbar = () => {
@@ -12,7 +11,6 @@ const UserNavbar = () => {
     <nav className="navbar navbar-expand-lg navbar-light shadow-sm px-3" style={{ backgroundColor: "#F4F9FD" }}>
       <div className="container-fluid">
         <a className="navbar-brand d-flex align-items-center gap-2 fs-5 mb-0">
-          {/* <img src={Image?.CompanyLogo} alt="Emr" className="Emr-logo" /> */}
           <span className='Emr-heading'>DCRM ANALYSIS AUTOMATION</span>
         </a>
 

@@ -1,13 +1,12 @@
 import ButtonComponent from 'Components/Button/Button';
-import SpinnerComponent from 'Components/Spinner/Spinner';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import useCommonState, { useDispatch } from 'ResuableFunctions/CustomHooks';
 import Icons from 'Utils/Icons';
-import { handle_delete_data, handle_train_model_progress } from 'Views/Admin/Action/AdminAction';
+import { handle_train_model_progress } from 'Views/Admin/Action/AdminAction';
 import { deletion_data, train_modal_path } from 'Views/Admin/Slice/Admin_slice';
 
-const FolderCard = ({ item, is_under_tarining }) => {
+const FolderCard = ({ item }) => {
   const { adminState } = useCommonState();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -19,6 +18,7 @@ const FolderCard = ({ item, is_under_tarining }) => {
   }
 
   const get_files = (node) => {
+    console.log(item)
     return Array.isArray(node.children)
       ? node.children.flatMap(child => {
 

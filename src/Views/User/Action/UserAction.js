@@ -49,9 +49,10 @@ export const handle_correction_predicting = params => async (dispatch) => {
   else {
     fd.append("class_name", params?.class_name)
     fd.append("user_response", 'no')
+    fd.append("phase", params?.phase)
     for (let i = 0; i < params?.send_image.length; i++) {
       fd.append('images', params?.send_image[i]);
-  }
+    }
 
     try {
       dispatch(correction_predicting({ type: 'request' }))
@@ -74,7 +75,7 @@ export const handleGetPrintData = params => async (dispatch) => {
     dispatch(get_printing_data({ type: 'request' }))
     const { data } = await axiosInstance.post("/get_report_data", params)
 
-    if (data.error_code === 200) dispatch(get_printing_data({ type: 'response', data: data?.data?.prediction_report || [] }))
+    if (data.error_code === 200) dispatch(get_printing_data({ type: 'response', data: data?.data || {} }))
     else dispatch(get_printing_data({ type: 'failure', message: data?.message || '' }))
   } catch (Err) {
     dispatch(get_printing_data({ type: 'failure', message: Err?.message || '' }))

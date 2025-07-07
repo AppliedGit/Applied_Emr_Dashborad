@@ -113,7 +113,7 @@ const userSlice = createSlice({
 
     get_printing_data(state, action) {
       const { type, data } = action.payload;
-      let printing_data = data?.map(item => {
+      let printing_data = data?.prediction_report?.map(item => {
 
         let converted_graph_data = item?.graph_data?.map(obj => {
           const [key, value] = Object.entries(obj)[0];
@@ -133,7 +133,10 @@ const userSlice = createSlice({
 
         case "response":
           state.getting_print_data_glow = false
-          state.printing_data = printing_data
+          state.printing_data = {
+            conclusion: data?.conclusion_msg || '',
+            prediction_report:printing_data
+          }
           break;
 
         case "failure":

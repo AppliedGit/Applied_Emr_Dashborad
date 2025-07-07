@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useState } from 'react';
 import Image from 'Utils/Image';
 import PrintableTable from './PrintableTable';
 import PrintableTransformerTable from './PrintableTransformerTable';
@@ -6,6 +6,15 @@ import PrintableOltcTable from './PrintableOltcTable';
 import PrintableEngineerDetails from './PrintableEngineerDetails';
 import Chart from './Chart';
 import useCommonState from 'ResuableFunctions/CustomHooks';
+
+const editableStyle = {
+    fontSize: "18px",
+    border: "1px solid #ccc",
+    padding: "8px",
+    borderRadius: "5px",
+    backgroundColor: "#f9f9f9",
+    minHeight: "40px",
+};
 
 const PrintableReport = forwardRef(
     (
@@ -21,7 +30,32 @@ const PrintableReport = forwardRef(
     ) => {
 
         const { userState } = useCommonState();
+        const [editablePhases, setEditablePhases] = useState(userState?.printing_data || []);
 
+        const handleChange = (value, index, field, subfield = null) => {
+            const updated = editablePhases.map((item, i) => {
+                if (i !== index) return item;
+
+                if (subfield && field === "result") {
+                    return {
+                        ...item,
+                        result: [
+                            {
+                                ...item.result?.[0],
+                                [subfield]: value,
+                            },
+                        ],
+                    };
+                }
+
+                return {
+                    ...item,
+                    [field]: value,
+                };
+            });
+
+            setEditablePhases(updated);
+        };
 
         return (
             <div ref={ref} className="a4-print-page p-4 pt-0">
@@ -157,14 +191,24 @@ const PrintableReport = forwardRef(
                         ))}
                     </div>
                 </div>
-                <div className="container mt-5">
+                {/* <div className="container mt-5">
                     {userState?.printing_data?.map((phase, idx) => (
                         <div key={idx} className="phase-block mb-5">
                             <h3 className="text-center heading-1 mb-4 text-danger">Phase Analysis</h3>
                             <h4 className="heading-1 text-center text-primary">{phase.phase}</h4>
 
                             <div className="text-center my-3">
-                                <img src={phase?.phase_image} alt={`${phase?.phase}`} className="img-fluid" />
+                                <img
+                                    src={phase?.phase_image}
+                                    alt={`${phase?.phase}`}
+                                    className="img-fluid"
+                                    style={{
+                                        Width: "100vw",
+                                        Height: "100vh",
+                                        objectFit: 'cover',
+                                        borderRadius: '8px'
+                                    }}
+                                />
                             </div>
 
                             <h6 className='heading-1'>Analysis :</h6>
@@ -185,6 +229,7 @@ const PrintableReport = forwardRef(
                                     phase?.result[0]?.predicted_class?.split("/")?.length - 2
                                 ]}
                             </p>
+                           
                             <h5 className="mt-4 heading-1 text-danger page-break ">Switching Time :</h5>
                             <div className="text-center my-3">
                                 <Chart phase={phase?.graph_data} />
@@ -204,23 +249,172 @@ const PrintableReport = forwardRef(
                                     null
                             }
 
-                            {/* Page break after each phase except last one */}
+                          
                             {idx < userState.printing_data.length - 1 && <div className="" />}
                         </div>
                     ))}
 
+                </div> */}
+                <div className="container mt-5">
+                    {editablePhases?.prediction_report?.map((phase, idx) => (
+                        <div key={idx} className="phase-block mb-5">
+                            <h3 className="text-center heading-1 mb-4 text-danger">Phase Analysis</h3>
+                            <h4
+                                className="heading-1 text-center text-primary"
+                                contentEditable
+                                suppressContentEditableWarning
+                                onInput={(e) => handleChange(e.target.innerText, idx, "phase")}
+                            >
+                                {phase.phase}
+                            </h4>
+
+                            <div className="text-center my-3">
+                                <img
+                                    src={phase?.phase_image}
+                                    alt={phase?.phase}
+                                    className="img-fluid"
+                                    style={{
+                                        width: "100%",
+                                        height: "auto",
+                                        objectFit: "cover",
+                                        borderRadius: "8px",
+                                    }}
+                                />
+                            </div>
+
+                            <h6 className="heading-1">Analysis:</h6>
+                            <p
+                                className="text-justify"
+                                contentEditable
+                                suppressContentEditableWarning
+                                style={editableStyle}
+                                onInput={(e) => {
+                                    const updated = editablePhases.map((item, i) => {
+                                        if (i !== idx) return item;
+
+                                        return {
+                                            ...item,
+                                            result: [
+                                                {
+                                                    ...item.result?.[0],
+                                                    transition: e.target.value,
+                                                },
+                                            ],
+                                        };
+                                    });
+
+                                    setEditablePhases(updated);
+                                }}
+                            >
+                                {phase.result[0]?.predicted_image_msg}
+                            </p>
+
+
+                            <h5 className="mt-4 heading-1 text-danger page-break">Motor Current Profile:</h5>
+                            <div className="text-center my-3">
+                                <img
+                                    src={phase?.upload_image}
+                                    alt="Motor Current Profile"
+                                    className="img-fluid"
+                                />
+                            </div>
+
+                            {/* <h6 className="heading-1">Analysis:</h6>
+                            <textarea
+                                className="form-control w-100 mb-2"
+                                rows={6}
+                                value={phase.result?.[0]?.output || ""}
+                                onChange={(e) => {
+                                    const updated = editablePhases.map((item, i) => {
+                                        if (i === idx) {
+                                            return {
+                                                ...item,
+                                                result: [
+                                                    {
+                                                        ...item.result?.[0],
+                                                        output: e.target.value,
+                                                    },
+                                                ],
+                                            };
+                                        }
+                                        return item;
+                                    });
+                                    setEditablePhases(updated);
+                                }}
+                                
+                            /> */}
+
+                            <h6 className="heading-1">Analysis:</h6>
+                            <p
+                                className="text-justify"
+                                contentEditable
+                                suppressContentEditableWarning
+                                style={editableStyle}
+                                onInput={(e) => {
+                                    const updated = editablePhases.map((item, i) => {
+                                        if (i !== idx) return item;
+
+                                        return {
+                                            ...item,
+                                            result: [
+                                                {
+                                                    ...item.result?.[0],
+                                                    transition: e.target.value,
+                                                },
+                                            ],
+                                        };
+                                    });
+
+                                    setEditablePhases(updated);
+                                }}
+                            >
+                                {phase.result[0]?.upload_img_msg}
+                            </p>
+
+
+
+                            <h5 className="mt-4 heading-1 text-danger page-break">Transition Time:</h5>
+                            <div className="text-center my-3">
+                                <Chart phase={phase?.graph_data} />
+                            </div>
+
+                            {phase.result?.[0]?.transition && (
+                                <>
+                                    <p className="heading-1 mt-2">Analysis :</p>
+                                    <p
+                                        className="text-justify"
+                                        contentEditable
+                                        suppressContentEditableWarning
+                                        style={editableStyle}
+                                        onInput={(e) => {
+                                            const updated = [...editablePhases];
+                                            updated[idx].result[0].transition = e.target.innertext;
+                                            setEditablePhases(updated);
+                                        }}
+                                    >
+                                        {phase.result[0].transition_time_msg}
+                                    </p>
+                                </>
+                            )}
+
+                            {/* Page break between phases */}
+                            {idx < editablePhases.length - 1 && <div className="page-break" />}
+                        </div>
+                    ))}
                 </div>
 
-                <div className="container ">
+                <div className="container page-break">
                     <h4 className="mb-4 heading-1 ">Conclusion :</h4>
-                    <p className="full-width-text">
-                        From these recorded Waveforms, it is clear that the Motor Drive Mechanism, Energy Accumulator and the Transition Resistor are OKAY.
+                    <p
+                        className="full-width-text"
+                        contentEditable
+                        suppressContentEditableWarning
+                        style={{ border: "1px dashed #ccc", padding: "8px", minHeight: "80px" }}
+                    >
+                        {editablePhases?.conclusion || ''}
                     </p>
-                    <p className="full-width-text">
-                        All of Diverter and Selector Contacts also looks healthy and ready to do Tap change operation On-load.
-                    </p>
-
                 </div>
+
                 <div className="container mt-4">
                     <PrintableEngineerDetails />
                 </div>

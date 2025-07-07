@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import PrintableReport from './PrintableReport';
 import SpinnerComponent from 'Components/Spinner/Spinner';

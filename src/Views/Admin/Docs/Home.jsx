@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import Icons from 'Utils/Icons';
-import { Button, Navbar } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import useCommonState, { useCustomNavigate, useDispatch } from 'ResuableFunctions/CustomHooks';
 import { handle_get_dir } from '../Action/AdminAction';
 import FolderCard from '../../../Components/Card/FolderCard';

@@ -14,7 +14,7 @@ const PrintableEngineerDetails = () => {
                     {engineerFields.map(({ label, name }, index) => (
                         <tr key={index}>
                             <th style={{ width: '30%',fontWeight:"400" }}>
-                                {label} <span className="text-danger">*</span>
+                                {label} 
                             </th>
                             <td data-value="">
                                 <input

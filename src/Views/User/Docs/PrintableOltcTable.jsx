@@ -23,12 +23,12 @@ const PrintableOltcTable = () => {
                     {oltcFields.map(({ label, placeholder }, index) => (
                         <tr key={index}>
                             <th style={{ width: '30%',fontWeight:"400" }}>
-                                {label} <span className="text-danger">*</span>
+                                {label} 
                             </th>
                             <td >
                                 <input
                                     type="text"
-                                    className="form-control  border-0"
+                                    className="form-control t  border-0"
                                     placeholder={placeholder}
                                     onInput={(e) => {
                                         e.target.parentElement.setAttribute('data-value', e.target.value);

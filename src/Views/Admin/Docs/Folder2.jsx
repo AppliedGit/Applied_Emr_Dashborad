@@ -108,7 +108,7 @@ const Folder2 = () => {
                             </Link>
                             <h3 className="mb-0 mt-1">{folder}</h3>
                         </div>
-                        <p>Total Files: {get_files(adminState?.dir_data)?.length}</p>
+                        {/* <p>Total Files: {get_files(adminState?.dir_data)?.length}</p> */}
 
                         <hr className='divider' />
                         <div className='p-4'>
