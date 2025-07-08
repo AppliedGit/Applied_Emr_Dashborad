@@ -194,7 +194,8 @@ const PrintableReport = forwardRef(
                                 suppressContentEditableWarning
                                 onInput={(e) => handleChange(e.target.innerText, idx, "phase")}
                             >
-                                {phase.phase .replace(/_Raise_/, "-Raise_")?.replaceAll("_"," ")}
+                                {/* {phase.phase .replace(/_Raise_/, "-Raise_")?.replaceAll("_"," ")} */}
+                                {phase.phase?.replace(/_(Raise|Lower)_/, "-$1_")?.replaceAll("_", " ")}
                             </h4>
 
                             <div className="text-center my-3">
