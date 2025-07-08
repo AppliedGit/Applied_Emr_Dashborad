@@ -8,7 +8,7 @@ const PrintableTransformerTable = () => {
         { label: 'Voltage Rating', placeholder: 'kV', type: 'number', maxLength: 3 },
         { label: 'Vector Group', placeholder: 'YNyn0' },
         { label: 'Number of Phases', placeholder: '0', type: 'number' },
-        { label: 'Rated Frequency', placeholder: '0 Hz', type: 'number', maxLength: 3 },
+        { label: 'Rated Frequency', placeholder: 'Hz', type: 'number', maxLength: 3 },
         { label: 'Serial Number', placeholder: 'W01-107160089/G-01/13/16/00148' },
         { label: 'Special Remarks', placeholder: '-' },
     ];

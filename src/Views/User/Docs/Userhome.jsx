@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Card, Form, Modal } from 'react-bootstrap';
+import { Button, Card, Form, Modal } from 'react-bootstrap';
 import { FaRegFile } from 'react-icons/fa';
 import useCommonState from 'ResuableFunctions/CustomHooks';
 import { handle_get_dir } from 'Views/Admin/Action/AdminAction';
@@ -14,24 +14,30 @@ import ButtonSpinner from 'Components/Spinner/ButtonSpinner';
 import Icons from 'Utils/Icons';
 import PrintPage from './PrintPage';
 
+
 const Userhome = () => {
   const dispatch = useDispatch();
   const { adminState, userState } = useCommonState();
   const [showPrintModal, setShowPrintModal] = useState(false);
   const normalize = (str) => str?.toLowerCase().replace(/[\s_]+/g, '');
   const [modalType, setModalType] = useState("Single Phase");
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
 
   const phase = userState?.user_data?.phase;
   const hasPredictedData = !!userState?.predicted_data?.length;
 
   // Define start and end based on modal type
-  const isSinglePhase = modalType === "Single Phase";
-  const isMultiPhase = modalType === "Multi Phase";
+  // const isSinglePhase = modalType === "Single Phase ";
+  // const isMultiPhase = modalType === "Multi Phase";
+
+  // const isFinalPhase =
+  //   (isSinglePhase && phase === "R_Phase_Lower_Direction") ||
+  //   (isMultiPhase && phase === "B_Phase_Lower_Direction");
 
   const isFinalPhase =
-    (isSinglePhase && phase === "R_Phase_Lower_Direction") ||
-    (isMultiPhase && phase === "B_Phase_Lower_Direction");
+    (modalType === "Single Phase" && phase === "R_Phase_Lower_Direction") ||
+    (modalType === "Multi Phase" && phase === "B_Phase_Lower_Direction");
 
   const showNext =
     !isFinalPhase && hasPredictedData; // any phase before final with data
@@ -292,12 +298,15 @@ const Userhome = () => {
                               checked={modalType === item}
                             />
                             <label className="form-check-label" htmlFor={item + ind}>
-                              {item}
+                              {item === "Single Phase"
+                                ? "Single Phase Transformer"
+                                : "MultiPhase Transformer"}
                             </label>
                           </div>
                         </div>
                       ))}
                     </div>
+
                   </Form.Group>
                   <Form.Group className="mb-3">
                     <h6 className="form-label heading-2">Phase</h6>
@@ -481,8 +490,8 @@ const Userhome = () => {
                     clickFunction={() => dispatch(update_user_data({ correct_prediction_modal: true, folder_type: "Use Class" }))}
                   />
 
-                  
-                   {/* { userState?.user_data?.phase === "B_Phase_Lower_Direction" && userState?.predicted_data?.length ?
+
+                  {/* { userState?.user_data?.phase === "B_Phase_Lower_Direction" && userState?.predicted_data?.length ?
                   <ButtonComponent
                     buttonName="Print Result"
                     className="btn-primary"
@@ -490,38 +499,50 @@ const Userhome = () => {
                   />
                    :
                       null
-                  } */}
-                 {
-                    (userState?.user_data?.phase === "R_Phase_Lower_Direction" ||
-                      userState?.user_data?.phase === "B_Phase_Lower_Direction") &&
-                      userState?.predicted_data?.length ? (
+                  }  */}
+                  {(
+                    (modalType === "Single Phase" &&
+                      userState?.user_data?.phase === "R_Phase_Lower_Direction" &&
+                      userState?.predicted_data?.length > 0) ||
+                    (modalType === "Multi Phase" &&
+                      userState?.user_data?.phase === "B_Phase_Lower_Direction" &&
+                      userState?.predicted_data?.length > 0)
+                  ) && (
                       <ButtonComponent
                         buttonName="Print Result"
                         className="btn-primary"
                         clickFunction={handleprint}
                       />
-                    ) : null
-                  } 
-                                    
-                
-
+                    )}
 
                   <PrintPage
                     show={showPrintModal}
                     onHide={() => setShowPrintModal(false)}
                     userState={userState}
                   />
-
+                  {/* 
                   <ButtonComponent
                     buttonName={buttonLabel}
                     className="btn-primary"
                     clickFunction={() => {
                       if (isFinalPhase && hasPredictedData) {
-                        // Final phase: run "done" logic
-                        dispatch(predicted_next_data({ clear_all_data: true }));
+                        // Show confirmation modal before final action
+                        setShowConfirmModal(true);
                       } else {
                         // Normal flow
                         dispatch(predicted_next_data({}));
+                      }
+                    }}
+                    btnDisable={!hasPredictedData}
+                  /> */}
+                  <ButtonComponent
+                    buttonName={buttonLabel}
+                    className="btn-primary"
+                    clickFunction={() => {
+                      if (isFinalPhase && hasPredictedData) {
+                        setShowConfirmModal(true); // Show confirm modal on Done
+                      } else {
+                        dispatch(predicted_next_data({})); // Normal Next
                       }
                     }}
                     btnDisable={!hasPredictedData}
@@ -613,6 +634,30 @@ const Userhome = () => {
           </div>
         </Modal.Footer>
       </Modal>
+
+      <Modal show={showConfirmModal} onHide={() => setShowConfirmModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Final Step</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to complete and clear all data?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowConfirmModal(false)}>
+            Cancel
+          </Button>
+          <Button
+            variant="primary"
+            onClick={() => {
+              dispatch(predicted_next_data({ clear_all_data: true }));
+              setShowConfirmModal(false);
+            }}
+          >
+            Yes, Done
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+
+
 
     </div >
   );
